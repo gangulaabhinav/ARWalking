@@ -1,0 +1,4 @@
+# Ignoring build directory
+build/**
+*.DS_Store
+**/xcuserdata/**
