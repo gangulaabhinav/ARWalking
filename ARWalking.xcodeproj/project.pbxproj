@@ -82,6 +82,7 @@
 				ADCB0E1B2869C22700A0BF16 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		ADCB0E1B2869C22700A0BF16 /* Products */ = {
 			isa = PBXGroup;
