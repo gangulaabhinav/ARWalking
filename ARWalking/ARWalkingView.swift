@@ -5,8 +5,9 @@
 //  Created by Abhinav Gangula on 27/06/22.
 //
 
-import SwiftUI
+import ARKit
 import RealityKit
+import SwiftUI
 
 struct ARWalkingView : View {
     var body: some View {
@@ -17,21 +18,33 @@ struct ARWalkingView : View {
 struct ARViewContainer: UIViewRepresentable {
     
     func makeUIView(context: Context) -> ARView {
-        
         let arView = ARView(frame: .zero)
-        
-        // Load the "Box" scene from the "Experience" Reality File
-        let boxAnchor = try! Experience.loadBox()
-        
-        // Add the box anchor to the scene
-        arView.scene.anchors.append(boxAnchor)
-        
+
+        // configure horizontal lane detection
+        arView.automaticallyConfigureSession = true
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal]
+        configuration.environmentTexturing = .automatic
+        arView.session.run(configuration)
+
+        // add plane mesh model anchor to arView
+        let boxMesh: MeshResource = .generatePlane(width: 0.5, depth: 0.5)
+        let modelEntity = ModelEntity(mesh: boxMesh)
+        let planeAnchor = AnchorEntity(.plane([.any],
+                              classification: [.any],
+                               minimumBounds: [0.5, 0.5]))
+        planeAnchor.addChild(modelEntity)
+        arView.scene.anchors.append(planeAnchor)
+
         return arView
-        
     }
     
-    func updateUIView(_ uiView: ARView, context: Context) {}
+    func updateUIView(_ uiView: ARView, context: Context) {
+    }
     
+    func startHorizontalPlaneDetectionInView(arView: ARView) {
+        
+    }
 }
 
 #if DEBUG
