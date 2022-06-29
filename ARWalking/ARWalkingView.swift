@@ -47,13 +47,18 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         for anchor in anchors {
             if let planeAnchor = anchor as? ARPlaneAnchor {
                 if planeAnchor.alignment == .horizontal {
-                    let boxMesh: MeshResource = .generatePlane(width: planeAnchor.extent.x, depth: planeAnchor.extent.z)
-                    var material = SimpleMaterial()
-                    material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
-                    let modelEntity = ModelEntity(mesh: boxMesh, materials: [material])
-                    let planeAnchorEntity = AnchorEntity(anchor: planeAnchor)
-                    planeAnchorEntity.addChild(modelEntity)
-                    arView.scene.anchors.append(planeAnchorEntity)
+                    switch planeAnchor.classification {
+                    case .floor:
+                        let boxMesh: MeshResource = .generatePlane(width: planeAnchor.extent.x, depth: planeAnchor.extent.z)
+                        var material = SimpleMaterial()
+                        material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
+                        let modelEntity = ModelEntity(mesh: boxMesh, materials: [material])
+                        let planeAnchorEntity = AnchorEntity(anchor: planeAnchor)
+                        planeAnchorEntity.addChild(modelEntity)
+                        arView.scene.anchors.append(planeAnchorEntity)
+                    default:
+                        continue
+                    }
                 }
             }
         }
