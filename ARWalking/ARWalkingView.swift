@@ -9,6 +9,13 @@ import ARKit
 import RealityKit
 import SwiftUI
 
+// Walking one with dimensions in meters
+struct ARWalkingZone {
+    let width: Float = 1.0
+    let height: Float = 2.0
+    let depth: Float = 4.0
+}
+
 struct ARWalkingView : View {
     var body: some View {
         return ARViewContainer().edgesIgnoringSafeArea(.all)
@@ -49,13 +56,8 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                 if planeAnchor.alignment == .horizontal {
                     switch planeAnchor.classification {
                     case .floor:
-                        let boxMesh: MeshResource = .generatePlane(width: planeAnchor.extent.x, depth: planeAnchor.extent.z)
-                        var material = SimpleMaterial()
-                        material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
-                        let modelEntity = ModelEntity(mesh: boxMesh, materials: [material])
-                        let planeAnchorEntity = AnchorEntity(anchor: planeAnchor)
-                        planeAnchorEntity.addChild(modelEntity)
-                        arView.scene.anchors.append(planeAnchorEntity)
+                        drawFloorWith(planeAnchor: planeAnchor)
+                        drawWalkingZoneWith(planeAnchor: planeAnchor)
                     default:
                         continue
                     }
@@ -70,6 +72,33 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
 
     func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
         print("anchor removed")
+    }
+    
+    func drawFloorWith(planeAnchor: ARPlaneAnchor) {
+        let boxMesh: MeshResource = .generatePlane(width: planeAnchor.extent.x, depth: planeAnchor.extent.z)
+        var material = SimpleMaterial()
+        material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
+        let modelEntity = ModelEntity(mesh: boxMesh, materials: [material])
+        let planeAnchorEntity = AnchorEntity(anchor: planeAnchor)
+        planeAnchorEntity.addChild(modelEntity)
+        arView.scene.anchors.append(planeAnchorEntity)
+    }
+    
+    func drawWalkingZoneWith(planeAnchor: ARPlaneAnchor) {
+        let arWalkingZone = ARWalkingZone()
+        var material = SimpleMaterial()
+        material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
+        let walkingZoneEntity = AnchorEntity(anchor: planeAnchor)
+
+        // front zone
+        let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
+        let frontModelEntity = ModelEntity(mesh: frontMesh, materials: [material])
+        var transform = Transform.identity
+        transform.translation = [0, arWalkingZone.height/2, -arWalkingZone.depth/2]
+        frontModelEntity.transform = transform
+        walkingZoneEntity.addChild(frontModelEntity)
+
+        arView.scene.anchors.append(walkingZoneEntity)
     }
 }
 
