@@ -99,10 +99,10 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         walkingZoneEntity.addChild(frontModelEntity)
 
         // left zone
-        let leftMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, depth: arWalkingZone.width)
+        let leftMesh: MeshResource = .generatePlane(width: arWalkingZone.height, depth: arWalkingZone.depth)
         let leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
         var leftTransform = Transform.identity
-        leftTransform.translation = [-arWalkingZone.width/2, 0, 0]
+        leftTransform.translation = [-arWalkingZone.width/2, arWalkingZone.height/2, 0]
         leftTransform.rotation = simd_quatf(angle: -Float.pi/2, axis: [0, 0, 1])
         leftModelEntity.transform = leftTransform
         walkingZoneEntity.addChild(leftModelEntity)
@@ -111,7 +111,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let rightMesh: MeshResource = leftMesh
         let rightModelEntity = ModelEntity(mesh: rightMesh, materials: [material])
         var rightTransform = Transform.identity
-        rightTransform.translation = [arWalkingZone.width/2, 0, 0]
+        rightTransform.translation = [arWalkingZone.width/2, arWalkingZone.height/2, 0]
         rightTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 0, 1])
         rightModelEntity.transform = rightTransform
         walkingZoneEntity.addChild(rightModelEntity)
