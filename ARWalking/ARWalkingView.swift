@@ -116,6 +116,20 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         rightModelEntity.transform = rightTransform
         walkingZoneEntity.addChild(rightModelEntity)
 
+        // bottom zone
+        let bottomMesh: MeshResource = .generatePlane(width: arWalkingZone.width, depth: arWalkingZone.depth)
+        let bottomModelEntity = ModelEntity(mesh: bottomMesh, materials: [material])
+        walkingZoneEntity.addChild(bottomModelEntity)
+
+        // top zone
+        let topMesh: MeshResource = bottomMesh
+        let topModelEntity = ModelEntity(mesh: topMesh, materials: [material])
+        var topTransform = Transform.identity
+        topTransform.translation = [0, arWalkingZone.height, 0]
+        topTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 0, 1])
+        topModelEntity.transform = topTransform
+        walkingZoneEntity.addChild(topModelEntity)
+
         arView.scene.anchors.append(walkingZoneEntity)
     }
 }
