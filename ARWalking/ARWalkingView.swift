@@ -93,10 +93,28 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         // front zone
         let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
         let frontModelEntity = ModelEntity(mesh: frontMesh, materials: [material])
-        var transform = Transform.identity
-        transform.translation = [0, arWalkingZone.height/2, -arWalkingZone.depth/2]
-        frontModelEntity.transform = transform
+        var frontTransform = Transform.identity
+        frontTransform.translation = [0, arWalkingZone.height/2, -arWalkingZone.depth/2]
+        frontModelEntity.transform = frontTransform
         walkingZoneEntity.addChild(frontModelEntity)
+
+        // left zone
+        let leftMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, depth: arWalkingZone.width)
+        let leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
+        var leftTransform = Transform.identity
+        leftTransform.translation = [-arWalkingZone.width/2, 0, 0]
+        leftTransform.rotation = simd_quatf(angle: -Float.pi/2, axis: [0, 0, 1])
+        leftModelEntity.transform = leftTransform
+        walkingZoneEntity.addChild(leftModelEntity)
+
+        // right zone
+        let rightMesh: MeshResource = leftMesh
+        let rightModelEntity = ModelEntity(mesh: rightMesh, materials: [material])
+        var rightTransform = Transform.identity
+        rightTransform.translation = [arWalkingZone.width/2, 0, 0]
+        rightTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 0, 1])
+        rightModelEntity.transform = rightTransform
+        walkingZoneEntity.addChild(rightModelEntity)
 
         arView.scene.anchors.append(walkingZoneEntity)
     }
