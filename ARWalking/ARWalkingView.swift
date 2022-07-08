@@ -57,7 +57,11 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                     switch planeAnchor.classification {
                     case .floor:
                         drawFloorWith(planeAnchor: planeAnchor)
-                        drawWalkingZoneWith(planeAnchor: planeAnchor)
+                        guard let transform = session.currentFrame?.camera.transform
+                        else { return }
+                        let cameraAnchor = ARAnchor(transform: transform)
+                        session.add(anchor: cameraAnchor)
+                        drawWalkingZoneWith(cameraAnchor: cameraAnchor)
                     default:
                         continue
                     }
@@ -84,11 +88,11 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         arView.scene.anchors.append(planeAnchorEntity)
     }
     
-    func drawWalkingZoneWith(planeAnchor: ARPlaneAnchor) {
+    func drawWalkingZoneWith(cameraAnchor: ARAnchor) {
         let arWalkingZone = ARWalkingZone()
         var material = SimpleMaterial()
         material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
-        let walkingZoneEntity = AnchorEntity(anchor: planeAnchor)
+        let walkingZoneEntity = AnchorEntity(anchor: cameraAnchor)
 
         // front zone
         let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
