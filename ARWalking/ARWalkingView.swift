@@ -9,13 +9,6 @@ import ARKit
 import RealityKit
 import SwiftUI
 
-// Walking one with dimensions in meters
-struct ARWalkingZone {
-    let width: Float = 1.0
-    let height: Float = 2.0
-    let depth: Float = 4.0
-}
-
 struct ARWalkingView : View {
     var body: some View {
         return ARViewContainer().edgesIgnoringSafeArea(.all)
@@ -49,12 +42,12 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         print("frame updates")
-        guard let transform = session.currentFrame?.camera.transform
-        else { return }
-        if walkingZoneEntity == nil {
-            return
-        }
-        walkingZoneEntity!.transform = Transform(matrix: transform)
+        //guard let transform = session.currentFrame?.camera.transform
+        //else { return }
+        //if walkingZoneEntity == nil {
+        //    return
+        //}
+        //walkingZoneEntity!.transform = Transform(matrix: transform)
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
@@ -65,9 +58,10 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                     switch planeAnchor.classification {
                     case .floor:
                         drawFloorWith(planeAnchor: planeAnchor)
-                        guard let transform = session.currentFrame?.camera.transform
+                        guard let cameraTransform = session.currentFrame?.camera.transform
                         else { return }
-                        let cameraAnchor = ARAnchor(transform: transform)
+                        let walkingZoneTransform = GetARWalkingZoneTransform(planeTransform: planeAnchor.transform, cameraTransform: cameraTransform)
+                        let cameraAnchor = ARAnchor(transform: walkingZoneTransform)
                         session.add(anchor: cameraAnchor)
                         drawWalkingZoneWith(cameraAnchor: cameraAnchor)
                     default:
@@ -125,33 +119,33 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
         let frontModelEntity = ModelEntity(mesh: frontMesh, materials: [material])
         var frontTransform = Transform.identity
-        frontTransform.translation = [0, arWalkingZone.height/2, -arWalkingZone.depth/2]
+        frontTransform.translation = [-arWalkingZone.depth, 0, 0]
+        frontTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
         frontModelEntity.transform = frontTransform
         walkingZoneEntity!.addChild(frontModelEntity)
 
-        // left zone
-        let leftMesh: MeshResource = .generatePlane(width: arWalkingZone.height, depth: arWalkingZone.depth)
-        let leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
-        var leftTransform = Transform.identity
-        leftTransform.translation = [-arWalkingZone.width/2, arWalkingZone.height/2, 0]
-        leftTransform.rotation = simd_quatf(angle: -Float.pi/2, axis: [0, 0, 1])
-        leftModelEntity.transform = leftTransform
-        walkingZoneEntity!.addChild(leftModelEntity)
-
         // right zone
-        let rightMesh: MeshResource = leftMesh
+        let rightMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, height: arWalkingZone.height)
         let rightModelEntity = ModelEntity(mesh: rightMesh, materials: [material])
         var rightTransform = Transform.identity
-        rightTransform.translation = [arWalkingZone.width/2, arWalkingZone.height/2, 0]
-        rightTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 0, 1])
+        rightTransform.translation = [-arWalkingZone.depth/2, 0, -arWalkingZone.width/2]
         rightModelEntity.transform = rightTransform
         walkingZoneEntity!.addChild(rightModelEntity)
 
+        // left zone
+        let leftMesh: MeshResource = rightMesh
+        let leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
+        var leftTransform = Transform.identity
+        leftTransform.translation = [-arWalkingZone.depth/2, 0, arWalkingZone.width/2]
+        leftTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 1, 0])
+        leftModelEntity.transform = leftTransform
+        walkingZoneEntity!.addChild(leftModelEntity)
+
         // top zone
-        let topMesh: MeshResource = .generatePlane(width: arWalkingZone.width, depth: arWalkingZone.depth)
+        let topMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, depth: arWalkingZone.width)
         let topModelEntity = ModelEntity(mesh: topMesh, materials: [material])
         var topTransform = Transform.identity
-        topTransform.translation = [0, arWalkingZone.height, 0]
+        topTransform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2, 0]
         topTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 0, 1])
         topModelEntity.transform = topTransform
         walkingZoneEntity!.addChild(topModelEntity)

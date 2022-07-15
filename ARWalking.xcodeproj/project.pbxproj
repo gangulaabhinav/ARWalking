@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD46A1582881D1BA0070641A /* ARWalkingZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD46A1572881D1BA0070641A /* ARWalkingZone.swift */; };
 		ADCB0E1E2869C22700A0BF16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB0E1D2869C22700A0BF16 /* AppDelegate.swift */; };
 		ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB0E1F2869C22700A0BF16 /* ARWalkingView.swift */; };
 		ADCB0E242869C22800A0BF16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADCB0E232869C22800A0BF16 /* Assets.xcassets */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD46A1572881D1BA0070641A /* ARWalkingZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZone.swift; sourceTree = "<group>"; };
 		ADCB0E1A2869C22700A0BF16 /* ARWalking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARWalking.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADCB0E1D2869C22700A0BF16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ADCB0E1F2869C22700A0BF16 /* ARWalkingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingView.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			children = (
 				ADCB0E1D2869C22700A0BF16 /* AppDelegate.swift */,
 				ADCB0E1F2869C22700A0BF16 /* ARWalkingView.swift */,
+				AD46A1572881D1BA0070641A /* ARWalkingZone.swift */,
 				ADCB0E232869C22800A0BF16 /* Assets.xcassets */,
 				ADCB0E252869C22800A0BF16 /* Preview Content */,
 			);
@@ -258,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD46A1582881D1BA0070641A /* ARWalkingZone.swift in Sources */,
 				ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */,
 				ADCB0E1E2869C22700A0BF16 /* AppDelegate.swift in Sources */,
 			);
