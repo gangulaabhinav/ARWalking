@@ -35,27 +35,22 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     }
     
     func updateUIView(_ uiView: ARView, context: Context) {
-        print("updateUIView!")
         return
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        print("frame updated")
         arWalkingZone?.onFrameUpdated(for: frame)
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-        print("anchor added")
         updateFloorIfRequired(from: anchors, inSession: session)
     }
 
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-        print("anchor updated")
         updateFloorIfRequired(from: anchors, inSession: session)
     }
 
     func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
-        print("anchor removed")
     }
 
     func updateFloorIfRequired(from anchors: [ARAnchor], inSession session: ARSession) {
