@@ -17,6 +17,7 @@ struct ARWalkingView : View {
 
 final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     let arView: ARView = ARView(frame: .zero)
+    var floorPlaneAnchor: ARPlaneAnchor?
     var floorModelEntity: ModelEntity?
     var walkingZoneEntity: AnchorEntity?
 
@@ -57,14 +58,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                 if planeAnchor.alignment == .horizontal {
                     switch planeAnchor.classification {
                     case .floor:
-                        drawFloorWith(planeAnchor: planeAnchor)
-                        guard let cameraTransform = session.currentFrame?.camera.transform
-                        else { return }
-                        let walkingZoneTransform = GetARWalkingZoneTransform(planeTransform: planeAnchor.transform, cameraTransform: cameraTransform)
-                        let cameraFloorDstance = GetCameraFloorDstance(floorTransform: planeAnchor.transform, cameraTransform: cameraTransform)
-                        let cameraAnchor = ARAnchor(transform: walkingZoneTransform)
-                        session.add(anchor: cameraAnchor)
-                        drawWalkingZoneWith(cameraAnchor: cameraAnchor, cameraFloorDstance: cameraFloorDstance)
+                        onFloorDetected(with: planeAnchor, inSession: session)
                     default:
                         continue
                     }
@@ -99,17 +93,30 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
         print("anchor removed")
     }
-    
-    func drawFloorWith(planeAnchor: ARPlaneAnchor) {
-        let planeMesh: MeshResource = .generatePlane(width: planeAnchor.extent.x, depth: planeAnchor.extent.z)
+
+    func onFloorDetected(with planeAnchor: ARPlaneAnchor, inSession session: ARSession) {
+        floorPlaneAnchor = planeAnchor
+        arView.scene.anchors.removeAll() // reset all anchor enitities on new plane detection
+
+        // Draw floor
+        let planeMesh: MeshResource = .generatePlane(width: floorPlaneAnchor!.extent.x, depth: floorPlaneAnchor!.extent.z)
         var material = SimpleMaterial()
         material.color =  .init(tint: .blue.withAlphaComponent(0.5), texture: nil)
         floorModelEntity = ModelEntity(mesh: planeMesh, materials: [material])
         let floorAnchorEntity = AnchorEntity(anchor: planeAnchor)
         floorAnchorEntity.addChild(floorModelEntity!)
         arView.scene.anchors.append(floorAnchorEntity)
+
+        // Draw ARWalkingZone
+        guard let cameraTransform = session.currentFrame?.camera.transform
+        else { return }
+        let walkingZoneTransform = GetARWalkingZoneTransform(planeTransform: floorPlaneAnchor!.transform, cameraTransform: cameraTransform)
+        let cameraFloorDstance = GetCameraFloorDstance(floorTransform: floorPlaneAnchor!.transform, cameraTransform: cameraTransform)
+        let cameraAnchor = ARAnchor(transform: walkingZoneTransform)
+        session.add(anchor: cameraAnchor)
+        drawWalkingZoneWith(cameraAnchor: cameraAnchor, cameraFloorDstance: cameraFloorDstance)
     }
-    
+
     func drawWalkingZoneWith(cameraAnchor: ARAnchor, cameraFloorDstance: Float) {
         let arWalkingZone = ARWalkingZone()
         var material = SimpleMaterial()
