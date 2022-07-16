@@ -61,9 +61,10 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                         guard let cameraTransform = session.currentFrame?.camera.transform
                         else { return }
                         let walkingZoneTransform = GetARWalkingZoneTransform(planeTransform: planeAnchor.transform, cameraTransform: cameraTransform)
+                        let cameraFloorDstance = GetCameraFloorDstance(floorTransform: planeAnchor.transform, cameraTransform: cameraTransform)
                         let cameraAnchor = ARAnchor(transform: walkingZoneTransform)
                         session.add(anchor: cameraAnchor)
-                        drawWalkingZoneWith(cameraAnchor: cameraAnchor)
+                        drawWalkingZoneWith(cameraAnchor: cameraAnchor, cameraFloorDstance: cameraFloorDstance)
                     default:
                         continue
                     }
@@ -109,7 +110,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         arView.scene.anchors.append(floorAnchorEntity)
     }
     
-    func drawWalkingZoneWith(cameraAnchor: ARAnchor) {
+    func drawWalkingZoneWith(cameraAnchor: ARAnchor, cameraFloorDstance: Float) {
         let arWalkingZone = ARWalkingZone()
         var material = SimpleMaterial()
         material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
@@ -119,7 +120,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
         let frontModelEntity = ModelEntity(mesh: frontMesh, materials: [material])
         var frontTransform = Transform.identity
-        frontTransform.translation = [-arWalkingZone.depth, 0, 0]
+        frontTransform.translation = [-arWalkingZone.depth, arWalkingZone.height/2 - cameraFloorDstance, 0]
         frontTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
         frontModelEntity.transform = frontTransform
         walkingZoneEntity!.addChild(frontModelEntity)
@@ -128,7 +129,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let rightMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, height: arWalkingZone.height)
         let rightModelEntity = ModelEntity(mesh: rightMesh, materials: [material])
         var rightTransform = Transform.identity
-        rightTransform.translation = [-arWalkingZone.depth/2, 0, -arWalkingZone.width/2]
+        rightTransform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2 - cameraFloorDstance, -arWalkingZone.width/2]
         rightModelEntity.transform = rightTransform
         walkingZoneEntity!.addChild(rightModelEntity)
 
@@ -136,7 +137,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let leftMesh: MeshResource = rightMesh
         let leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
         var leftTransform = Transform.identity
-        leftTransform.translation = [-arWalkingZone.depth/2, 0, arWalkingZone.width/2]
+        leftTransform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2 - cameraFloorDstance, arWalkingZone.width/2]
         leftTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 1, 0])
         leftModelEntity.transform = leftTransform
         walkingZoneEntity!.addChild(leftModelEntity)
@@ -145,7 +146,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
         let topMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, depth: arWalkingZone.width)
         let topModelEntity = ModelEntity(mesh: topMesh, materials: [material])
         var topTransform = Transform.identity
-        topTransform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2, 0]
+        topTransform.translation = [-arWalkingZone.depth/2, arWalkingZone.height - cameraFloorDstance, 0]
         topTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 0, 1])
         topModelEntity.transform = topTransform
         walkingZoneEntity!.addChild(topModelEntity)

@@ -50,3 +50,10 @@ func GetARWalkingZoneTransform(planeTransform: simd_float4x4, cameraTransform: s
     newTransform.rotation *= simd_quatf(angle: -theta, axis: SIMD3<Float>(0, 1, 0))
     return newTransform.matrix
 }
+
+func GetCameraFloorDstance(floorTransform: simd_float4x4, cameraTransform: simd_float4x4) -> Float {
+    let cameraPoint = cameraTransform[3]
+    // transform cameraPoin in local coordinates to floorTansoform coordinates and take the y coordinate as distance
+    let cameraPointwrtFloor = floorTransform.inverse * cameraPoint
+    return cameraPointwrtFloor[1]
+}
