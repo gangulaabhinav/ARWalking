@@ -17,13 +17,7 @@ struct ARWalkingView : View {
 
 final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     let arView: ARView = ARView(frame: .zero)
-    var floorPlaneAnchor: ARPlaneAnchor?
-    var floorModelEntity: ModelEntity?
-    var walkingZoneEntity: AnchorEntity?
-    var frontModelEntity: ModelEntity?
-    var rightModelEntity: ModelEntity?
-    var leftModelEntity: ModelEntity?
-    var topModelEntity: ModelEntity?
+    var arWalkingZone: ARWalkingZone?
 
     override init() {
         super.init()
@@ -47,7 +41,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         print("frame updated")
-        updateARWalkingZone(for: frame)
+        arWalkingZone?.onFrameUpdated(for: frame)
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
@@ -70,86 +64,16 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                 if planeAnchor.alignment == .horizontal {
                     switch planeAnchor.classification {
                     case .floor:
-                        onFloorUpdated(with: planeAnchor, inSession: session)
+                        if arWalkingZone == nil {
+                            arWalkingZone = ARWalkingZone(with: arView.scene, floorPlaneAnchor: planeAnchor)
+                        }
+                        arWalkingZone?.onFloorUpdated(with: planeAnchor)
                     default:
                         continue
                     }
                 }
             }
         }
-    }
-
-    func onFloorUpdated(with planeAnchor: ARPlaneAnchor, inSession session: ARSession) {
-        floorPlaneAnchor = planeAnchor
-        if floorModelEntity == nil {
-            // Draw floor
-            var material = SimpleMaterial()
-            material.color =  .init(tint: .blue.withAlphaComponent(0.5), texture: nil)
-            floorModelEntity = ModelEntity(mesh: .generatePlane(width: 1, depth: 1), materials: [material])
-            let floorAnchorEntity = AnchorEntity()
-            floorAnchorEntity.addChild(floorModelEntity!)
-            arView.scene.anchors.append(floorAnchorEntity)
-
-            drawWalkingZoneWith()
-        }
-
-        floorModelEntity!.model?.mesh = .generatePlane(width: floorPlaneAnchor!.extent.x, depth: floorPlaneAnchor!.extent.z)
-        floorModelEntity!.transform = Transform(matrix: floorPlaneAnchor!.transform)
-        floorModelEntity!.transform.translation += floorPlaneAnchor!.center
-    }
-
-    func drawWalkingZoneWith() {
-        let arWalkingZone = ARWalkingZone()
-        var material = SimpleMaterial()
-        material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
-        walkingZoneEntity = AnchorEntity()
-
-        // front zone
-        let frontMesh: MeshResource = .generatePlane(width: arWalkingZone.width, height: arWalkingZone.height)
-        frontModelEntity = ModelEntity(mesh: frontMesh, materials: [material])
-        var frontTransform = Transform.identity
-        frontTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
-        frontModelEntity!.transform = frontTransform
-        walkingZoneEntity!.addChild(frontModelEntity!)
-
-        // right zone
-        let rightMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, height: arWalkingZone.height)
-        rightModelEntity = ModelEntity(mesh: rightMesh, materials: [material])
-        walkingZoneEntity!.addChild(rightModelEntity!)
-
-        // left zone
-        let leftMesh: MeshResource = rightMesh
-        leftModelEntity = ModelEntity(mesh: leftMesh, materials: [material])
-        var leftTransform = Transform.identity
-        leftTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 1, 0])
-        leftModelEntity!.transform = leftTransform
-        walkingZoneEntity!.addChild(leftModelEntity!)
-
-        // top zone
-        let topMesh: MeshResource = .generatePlane(width: arWalkingZone.depth, depth: arWalkingZone.width)
-        topModelEntity = ModelEntity(mesh: topMesh, materials: [material])
-        var topTransform = Transform.identity
-        topTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 0, 1])
-        topModelEntity!.transform = topTransform
-        walkingZoneEntity!.addChild(topModelEntity!)
-
-        arView.scene.anchors.append(walkingZoneEntity!)
-    }
-
-    func updateARWalkingZone(for frame: ARFrame) {
-        if walkingZoneEntity == nil {
-            return
-        }
-        let cameraTransform = frame.camera.transform
-        let walkingZoneTransform = GetARWalkingZoneTransform(planeTransform: floorPlaneAnchor!.transform, cameraTransform: cameraTransform)
-        walkingZoneEntity!.transform = Transform(matrix: walkingZoneTransform)
-
-        let arWalkingZone = ARWalkingZone()
-        let cameraFloorDstance = GetCameraFloorDstance(floorTransform: floorPlaneAnchor!.transform, cameraTransform: cameraTransform)
-        frontModelEntity!.transform.translation = [-arWalkingZone.depth, arWalkingZone.height/2 - cameraFloorDstance, 0]
-        rightModelEntity!.transform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2 - cameraFloorDstance, -arWalkingZone.width/2]
-        leftModelEntity!.transform.translation = [-arWalkingZone.depth/2, arWalkingZone.height/2 - cameraFloorDstance, arWalkingZone.width/2]
-        topModelEntity!.transform.translation = [-arWalkingZone.depth/2, arWalkingZone.height - cameraFloorDstance, 0]
     }
 }
 
