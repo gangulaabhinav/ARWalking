@@ -39,21 +39,21 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        arWalkingZone?.onFrameUpdated(for: frame)
+        arWalkingZone?.session(session, didUpdate: frame)
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-        updateFloorIfRequired(from: anchors, inSession: session)
+        updateFloorIfRequired(inSession: session, from: anchors)
     }
 
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-        updateFloorIfRequired(from: anchors, inSession: session)
+        updateFloorIfRequired(inSession: session, from: anchors)
     }
 
     func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
     }
 
-    func updateFloorIfRequired(from anchors: [ARAnchor], inSession session: ARSession) {
+    func updateFloorIfRequired(inSession session: ARSession, from anchors: [ARAnchor]) {
         for anchor in anchors {
             if let planeAnchor = anchor as? ARPlaneAnchor {
                 if planeAnchor.alignment == .horizontal {
@@ -63,6 +63,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                             arWalkingZone = ARWalkingZone(with: arView.scene, floorPlaneAnchor: planeAnchor)
                         }
                         arWalkingZone?.onFloorUpdated(with: planeAnchor)
+                        
                     default:
                         continue
                     }

@@ -13,6 +13,7 @@ class ARWalkingZone {
     let width: Float = 1.0
     let height: Float = 2.0
     let depth: Float = 4.0
+    let rayThickness: Float = 0.01
 
     var floorPlaneAnchor: ARPlaneAnchor
     var floorModelEntity: ModelEntity
@@ -21,6 +22,7 @@ class ARWalkingZone {
     var rightModelEntity: ModelEntity
     var leftModelEntity: ModelEntity
     var topModelEntity: ModelEntity
+    var textModelEntity: ModelEntity
 
     init(with scene: Scene, floorPlaneAnchor: ARPlaneAnchor) {
         self.floorPlaneAnchor = floorPlaneAnchor
@@ -65,6 +67,18 @@ class ARWalkingZone {
         topModelEntity.transform = topTransform
         walkingZoneEntity.addChild(topModelEntity)
 
+        // Drawing a ray in the outward direction of camera and adding a placeholder text for displaying camera raycast distance
+        let rayMesh: MeshResource = .generateBox(width: depth, height: rayThickness, depth: rayThickness)
+        let rayModelEntity = ModelEntity(mesh: rayMesh, materials: [zoneMaterial])
+        walkingZoneEntity.addChild(rayModelEntity)
+        var textMaterial = SimpleMaterial()
+        textMaterial.color =  .init(tint: .red.withAlphaComponent(0.5), texture: nil)
+        let textMesh: MeshResource = .generateText("0.0", extrusionDepth: 0.1, font: .systemFont(ofSize: 0.1))
+        textModelEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
+        textModelEntity.transform.translation = [-depth/2 , 0, 0]
+        textModelEntity.transform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
+        walkingZoneEntity.addChild(textModelEntity)
+
         scene.anchors.append(walkingZoneEntity)
     }
 
@@ -75,7 +89,7 @@ class ARWalkingZone {
         floorModelEntity.transform.translation += floorPlaneAnchor.center
     }
 
-    func onFrameUpdated(for frame: ARFrame) {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
         let cameraTransform = frame.camera.transform
         let walkingZoneTransform = getARWalkingZoneTransform(planeTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
         walkingZoneEntity.transform = Transform(matrix: walkingZoneTransform)
@@ -85,6 +99,17 @@ class ARWalkingZone {
         rightModelEntity.transform.translation = [-depth/2, height/2 - cameraFloorDstance, -width/2]
         leftModelEntity.transform.translation = [-depth/2, height/2 - cameraFloorDstance, width/2]
         topModelEntity.transform.translation = [-depth/2, height - cameraFloorDstance, 0]
+
+        // Tryign to raycast from camera in the -Z direction of the camera (outwards of the camera) and displaying the distance
+        // The direction of z axis may not be perfect. But, works for now as this is temp code.
+        let rayCastQuery = ARRaycastQuery(origin: simd_make_float3(frame.camera.transform.columns.3), direction: -simd_make_float3(frame.camera.transform.columns.2), allowing: .estimatedPlane, alignment: .any)
+        let rayCastResult = session.raycast(rayCastQuery)
+        if !rayCastResult.isEmpty {
+            let worldPos = simd_make_float3(rayCastResult[0].worldTransform.columns.3)
+            let cameraPos = simd_make_float3(frame.camera.transform.columns.3)
+            let distane = simd_distance(cameraPos, worldPos)
+            textModelEntity.model?.mesh = .generateText(String(distane), extrusionDepth: 0.1, font: .systemFont(ofSize: 0.1))
+        }
     }
 
     // Plane and Camera Anchor direction udnerstanding
