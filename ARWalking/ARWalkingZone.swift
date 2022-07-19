@@ -60,10 +60,10 @@ class ARWalkingZone {
         walkingZoneEntity.addChild(leftModelEntity)
 
         // top zone
-        let topMesh: MeshResource = .generatePlane(width: depth, depth: width)
+        let topMesh: MeshResource = .generatePlane(width: depth, height: width)
         topModelEntity = ModelEntity(mesh: topMesh, materials: [zoneMaterial])
         var topTransform = Transform.identity
-        topTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 0, 1])
+        topTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [1, 0, 0])
         topModelEntity.transform = topTransform
         walkingZoneEntity.addChild(topModelEntity)
 
