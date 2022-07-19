@@ -18,10 +18,7 @@ class ARWalkingZone {
     var floorPlaneAnchor: ARPlaneAnchor
     var floorModelEntity: ModelEntity
     var walkingZoneEntity: AnchorEntity
-    var frontModelEntity: ModelEntity
-    var rightModelEntity: ModelEntity
-    var leftModelEntity: ModelEntity
-    var topModelEntity: ModelEntity
+    var arWalkingZoneSurfaces = [ARWalkingZoneSurface.Direction: ARWalkingZoneSurface]()
     var textModelEntity: ModelEntity
 
     init(with scene: Scene, floorPlaneAnchor: ARPlaneAnchor) {
@@ -39,33 +36,10 @@ class ARWalkingZone {
         walkingZoneEntity = AnchorEntity()
 
         // front zone
-        let frontMesh: MeshResource = .generatePlane(width: width, height: height)
-        frontModelEntity = ModelEntity(mesh: frontMesh, materials: [zoneMaterial])
-        var frontTransform = Transform.identity
-        frontTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
-        frontModelEntity.transform = frontTransform
-        walkingZoneEntity.addChild(frontModelEntity)
-
-        // right zone
-        let rightMesh: MeshResource = .generatePlane(width: depth, height: height)
-        rightModelEntity = ModelEntity(mesh: rightMesh, materials: [zoneMaterial])
-        walkingZoneEntity.addChild(rightModelEntity)
-
-        // left zone
-        let leftMesh: MeshResource = rightMesh
-        leftModelEntity = ModelEntity(mesh: leftMesh, materials: [zoneMaterial])
-        var leftTransform = Transform.identity
-        leftTransform.rotation = simd_quatf(angle: Float.pi, axis: [0, 1, 0])
-        leftModelEntity.transform = leftTransform
-        walkingZoneEntity.addChild(leftModelEntity)
-
-        // top zone
-        let topMesh: MeshResource = .generatePlane(width: depth, height: width)
-        topModelEntity = ModelEntity(mesh: topMesh, materials: [zoneMaterial])
-        var topTransform = Transform.identity
-        topTransform.rotation = simd_quatf(angle: Float.pi/2, axis: [1, 0, 0])
-        topModelEntity.transform = topTransform
-        walkingZoneEntity.addChild(topModelEntity)
+        arWalkingZoneSurfaces[.front] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: width, height: height, rotationAxis: .y, rotationAngle: Float.pi/2)
+        arWalkingZoneSurfaces[.right] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: height)
+        arWalkingZoneSurfaces[.left] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: height, rotationAxis: .y, rotationAngle: Float.pi)
+        arWalkingZoneSurfaces[.top] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: width, rotationAxis: .x, rotationAngle: Float.pi/2)
 
         // Drawing a ray in the outward direction of camera and adding a placeholder text for displaying camera raycast distance
         let rayMesh: MeshResource = .generateBox(width: depth, height: rayThickness, depth: rayThickness)
@@ -95,10 +69,10 @@ class ARWalkingZone {
         walkingZoneEntity.transform = Transform(matrix: walkingZoneTransform)
 
         let cameraFloorDstance = getCameraFloorDstance(floorTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
-        frontModelEntity.transform.translation = [-depth, height/2 - cameraFloorDstance, 0]
-        rightModelEntity.transform.translation = [-depth/2, height/2 - cameraFloorDstance, -width/2]
-        leftModelEntity.transform.translation = [-depth/2, height/2 - cameraFloorDstance, width/2]
-        topModelEntity.transform.translation = [-depth/2, height - cameraFloorDstance, 0]
+        arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0])
+        arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2, height/2 - cameraFloorDstance, -width/2])
+        arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2, height/2 - cameraFloorDstance, width/2])
+        arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2, height - cameraFloorDstance, 0])
 
         // Tryign to raycast from camera in the -Z direction of the camera (outwards of the camera) and displaying the distance
         // The direction of z axis may not be perfect. But, works for now as this is temp code.
