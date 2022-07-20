@@ -19,5 +19,14 @@ class ARWalkingZoneRay {
         let modelEntity = ModelEntity(mesh: sphereMesh, materials: [material])
         modelEntity.transform.translation = [x, y, 0.0]
         parentModel.addChild(modelEntity)
+
+        var textMaterial = SimpleMaterial()
+        textMaterial.color =  .init(tint: .red.withAlphaComponent(0.5), texture: nil)
+        let pointInParentTransform = parentModel.transform.matrix * [x, y, 0.0, 1]
+        let distance = simd_distance(pointInParentTransform, [0.0, 0.0, 0.0, 1])
+        let textMesh: MeshResource = .generateText(String(distance), extrusionDepth: 0.01, font: .systemFont(ofSize: 0.1))
+        let textModelEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
+        textModelEntity.transform.translation = [x, y, 0.0]
+        parentModel.addChild(textModelEntity)
     }
 }

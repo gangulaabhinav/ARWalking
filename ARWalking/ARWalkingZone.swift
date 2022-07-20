@@ -41,13 +41,10 @@ class ARWalkingZone {
         arWalkingZoneSurfaces[.left] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: height, rotationAxis: .y, rotationAngle: Float.pi)
         arWalkingZoneSurfaces[.top] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: width, rotationAxis: .x, rotationAngle: Float.pi/2)
 
-        // Drawing a ray in the outward direction of camera and adding a placeholder text for displaying camera raycast distance
-        let rayMesh: MeshResource = .generateBox(width: depth, height: rayThickness, depth: rayThickness)
-        let rayModelEntity = ModelEntity(mesh: rayMesh, materials: [zoneMaterial])
-        walkingZoneEntity.addChild(rayModelEntity)
+        // Add a placeholder text for displaying camera raycast distance
         var textMaterial = SimpleMaterial()
         textMaterial.color =  .init(tint: .red.withAlphaComponent(0.5), texture: nil)
-        let textMesh: MeshResource = .generateText("0.0", extrusionDepth: 0.1, font: .systemFont(ofSize: 0.1))
+        let textMesh: MeshResource = .generateText("0.0", extrusionDepth: 0.01, font: .systemFont(ofSize: 0.1))
         textModelEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
         textModelEntity.transform.translation = [-depth/2 , 0, 0]
         textModelEntity.transform.rotation = simd_quatf(angle: Float.pi/2, axis: [0, 1, 0])
