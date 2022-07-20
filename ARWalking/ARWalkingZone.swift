@@ -13,6 +13,7 @@ class ARWalkingZone {
     let width: Float = 1.0
     let height: Float = 2.0
     let depth: Float = 4.0
+    let depthOffset: Float = 0.5 // Depth offset from camera to start measuring or raycasting, should be lass than the depth
     let rayThickness: Float = 0.01
 
     var floorPlaneAnchor: ARPlaneAnchor
@@ -35,11 +36,10 @@ class ARWalkingZone {
         zoneMaterial.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
         walkingZoneEntity = AnchorEntity()
 
-        // front zone
         arWalkingZoneSurfaces[.front] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: width, height: height, rotationAxis: .y, rotationAngle: Float.pi/2)
-        arWalkingZoneSurfaces[.right] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: height)
-        arWalkingZoneSurfaces[.left] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: height, rotationAxis: .y, rotationAngle: Float.pi)
-        arWalkingZoneSurfaces[.top] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth, height: width, rotationAxis: .x, rotationAngle: Float.pi/2)
+        arWalkingZoneSurfaces[.right] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: height)
+        arWalkingZoneSurfaces[.left] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: height, rotationAxis: .y, rotationAngle: Float.pi)
+        arWalkingZoneSurfaces[.top] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: width, rotationAxis: .x, rotationAngle: Float.pi/2)
 
         // Drawing a ray in the outward direction of camera and adding a placeholder text for displaying camera raycast distance
         let rayMesh: MeshResource = .generateBox(width: depth, height: rayThickness, depth: rayThickness)
@@ -70,9 +70,9 @@ class ARWalkingZone {
 
         let cameraFloorDstance = getCameraFloorDstance(floorTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
         arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0])
-        arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2, height/2 - cameraFloorDstance, -width/2])
-        arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2, height/2 - cameraFloorDstance, width/2])
-        arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2, height - cameraFloorDstance, 0])
+        arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2])
+        arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, width/2])
+        arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDstance, 0])
 
         // Tryign to raycast from camera in the -Z direction of the camera (outwards of the camera) and displaying the distance
         // The direction of z axis may not be perfect. But, works for now as this is temp code.
