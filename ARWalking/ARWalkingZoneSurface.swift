@@ -34,10 +34,18 @@ class ARWalkingZoneSurface {
         frontTransform.rotation = GetquatfFromRotation(rotationAxis: rotationAxis, rotationAngle: rotationAngle)
         modelEntity.transform = frontTransform
         anchor.addChild(modelEntity)
+        addRays(material: material, width: width, height: height)
     }
 
     func SetTranslation(translation: SIMD3<Float>) {
         modelEntity.transform.translation = translation
+    }
+
+    func addRays(material: Material, width: Float, height: Float) {
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: -height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: -height/2))
     }
 
     func GetquatfFromRotation(rotationAxis: RotationAxis, rotationAngle: Float) -> simd_quatf {
