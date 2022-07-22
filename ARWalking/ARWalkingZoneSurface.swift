@@ -39,6 +39,9 @@ class ARWalkingZoneSurface {
 
     func SetTranslation(translation: SIMD3<Float>) {
         modelEntity.transform.translation = translation
+        for ray in rays {
+            ray.update()
+        }
     }
 
     func addRays(material: Material, width: Float, height: Float) {
