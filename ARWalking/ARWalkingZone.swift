@@ -10,11 +10,10 @@ import RealityKit
 
 // Walking one with dimensions in meters
 class ARWalkingZone {
-    let width: Float = 1.0
+    let width: Float = 0.75
     let height: Float = 2.0
-    let depth: Float = 4.0
-    let depthOffset: Float = 0.5 // Depth offset from camera to start measuring or raycasting, should be lass than the depth
-    let rayThickness: Float = 0.01
+    let depth: Float = 2.5
+    let depthOffset: Float = 1.0 // Depth offset from camera to start measuring or raycasting, should be lass than the depth
 
     var floorPlaneAnchor: ARPlaneAnchor
     var floorModelEntity: ModelEntity
