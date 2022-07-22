@@ -5,6 +5,7 @@
 //  Created by Abhinav Gangula on 18/07/22.
 //
 
+import ARKit
 import RealityKit
 
 class ARWalkingZoneSurface {
@@ -37,10 +38,10 @@ class ARWalkingZoneSurface {
         addRays(material: material, width: width, height: height)
     }
 
-    func SetTranslation(translation: SIMD3<Float>) {
+    func SetTranslation(translation: SIMD3<Float>, with session: ARSession, frame: ARFrame) {
         modelEntity.transform.translation = translation
         for ray in rays {
-            ray.update()
+            ray.update(with: session, frame: frame)
         }
     }
 
