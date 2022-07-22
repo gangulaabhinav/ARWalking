@@ -73,6 +73,10 @@ class ARWalkingZone {
     // -X pointing outwards of camera (x pointing inwards the camera)
     // Z pointing towards left of camera
     func getARWalkingZoneTransform(planeTransform: simd_float4x4, cameraTransform: simd_float4x4) -> simd_float4x4 {
+        // setting outout transform to plane rotation but camera translation
+        var arWalkingZoneTransform = Transform(matrix: planeTransform)
+        arWalkingZoneTransform.translation = simd_make_float3(cameraTransform[3])
+
         // set the translation for both the transforms to [0, 0, 0, 1]. We just need to calculate rotations.
         var planeTransform = planeTransform
         planeTransform[3] = [0, 0, 0, 1]
@@ -93,10 +97,9 @@ class ARWalkingZone {
                 theta += Float.pi
             }
         }
-        var newTransform = Transform(matrix: planeTransform)
         // rotate aroung y axis with angle -theta
-        newTransform.rotation *= simd_quatf(angle: -theta, axis: SIMD3<Float>(0, 1, 0))
-        return newTransform.matrix
+        arWalkingZoneTransform.rotation *= simd_quatf(angle: -theta, axis: SIMD3<Float>(0, 1, 0))
+        return arWalkingZoneTransform.matrix
     }
 
     func getCameraFloorDstance(floorTransform: simd_float4x4, cameraTransform: simd_float4x4) -> Float {
