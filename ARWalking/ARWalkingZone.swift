@@ -6,6 +6,7 @@
 //
 
 import ARKit
+import AVFoundation
 import RealityKit
 
 // Walking one with dimensions in meters
@@ -19,6 +20,8 @@ class ARWalkingZone {
     var floorModelEntity: ModelEntity
     var walkingZoneEntity: AnchorEntity
     var arWalkingZoneSurfaces = [ARWalkingZoneSurface.Direction: ARWalkingZoneSurface]()
+
+    var audioPlayer: AVAudioPlayer
 
     init(with scene: Scene, floorPlaneAnchor: ARPlaneAnchor) {
         self.floorPlaneAnchor = floorPlaneAnchor
@@ -40,6 +43,9 @@ class ARWalkingZone {
         arWalkingZoneSurfaces[.top] = ARWalkingZoneSurface(with: walkingZoneEntity, material: zoneMaterial, width: depth - depthOffset, height: width, rotationAxis: .x, rotationAngle: Float.pi/2)
 
         scene.anchors.append(walkingZoneEntity)
+
+        let sound = Bundle.main.path(forResource: "sound", ofType: "mp3")
+        audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: sound!))
     }
 
     func onFloorUpdated(with planeAnchor: ARPlaneAnchor) {
@@ -68,6 +74,11 @@ class ARWalkingZone {
             } else if surfaceResult == .yellow && zoneResult == .green {
                 zoneResult = surfaceResult
             }
+        }
+        if zoneResult == .red {
+            audioPlayer.stop()
+        } else {
+            audioPlayer.play()
         }
         return zoneResult
     }
