@@ -32,9 +32,10 @@ class ARWalkingZoneRay {
         let modelPositionInWorld = modelEntity.position(relativeTo: nil)
         let modelDistanceFromCamera = simd_distance(cameraPosition, modelPositionInWorld)
         // Tryign to raycast from camera to the model position
-        var rayCastDistance: Float = 0.0 // Assuming distance is 0 if there are no ray cast results
+
         let rayCastQuery = ARRaycastQuery(origin: cameraPosition, direction: modelPositionInWorld - cameraPosition, allowing: .estimatedPlane, alignment: .any)
         let rayCastResult = session.raycast(rayCastQuery)
+        var rayCastDistance: Float = Float.greatestFiniteMagnitude // Assuming distance is maximum if there are no ray cast results
         if !rayCastResult.isEmpty {
             let worldPos = simd_make_float3(rayCastResult[0].worldTransform.columns.3)
             let cameraPos = simd_make_float3(frame.camera.transform.columns.3)
@@ -43,7 +44,7 @@ class ARWalkingZoneRay {
         let rayCastModelDistance = modelDistanceFromCamera - rayCastDistance
 
         var material = SimpleMaterial()
-        var result:RayCastResult = .red
+        var result:RayCastResult = .green
         if rayCastModelDistance > rayCastBuffer { // ray cast is closer to modelDistanceFromCamera, red color
             material.color =  .init(tint: .red.withAlphaComponent(1.0), texture: nil)
             result = .red
