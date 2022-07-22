@@ -9,6 +9,13 @@ import ARKit
 import RealityKit
 
 class ARWalkingZoneRay {
+    enum RayCastResult
+    {
+        case green // ray cast if further from the model position, hence safe
+        case yellow // in buffer zone
+        case red // ray cast is near, so, no safe
+    }
+
     let sphereRadius: Float = 0.1 // sphere radius to show spheres at raycast positions
     let rayCastBuffer: Float = 0.2 // The buffer zone in which ray-cast is assumed to be successful if if it is out of bounds
     var modelEntity: ModelEntity
@@ -20,7 +27,7 @@ class ARWalkingZoneRay {
         parentModel.addChild(modelEntity)
     }
 
-    func update(with session: ARSession, frame: ARFrame) {
+    func update(with session: ARSession, frame: ARFrame) -> RayCastResult {
         let cameraPosition = simd_make_float3(frame.camera.transform.columns.3)
         let modelPositionInWorld = modelEntity.position(relativeTo: nil)
         let modelDistanceFromCamera = simd_distance(cameraPosition, modelPositionInWorld)
@@ -36,13 +43,18 @@ class ARWalkingZoneRay {
         let rayCastModelDistance = modelDistanceFromCamera - rayCastDistance
 
         var material = SimpleMaterial()
+        var result:RayCastResult = .red
         if rayCastModelDistance > rayCastBuffer { // ray cast is closer to modelDistanceFromCamera, red color
             material.color =  .init(tint: .red.withAlphaComponent(1.0), texture: nil)
+            result = .red
         } else if rayCastModelDistance > -rayCastBuffer { // buffer zone yellow color
             material.color =  .init(tint: .yellow.withAlphaComponent(1.0), texture: nil)
+            result = .yellow
         } else {
             material.color =  .init(tint: .green.withAlphaComponent(1.0), texture: nil)
+            result = .green
         }
         modelEntity.model?.materials = [material]
+        return result
     }
 }

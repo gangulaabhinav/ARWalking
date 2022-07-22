@@ -39,7 +39,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        arWalkingZone?.session(session, didUpdate: frame)
+        _ = arWalkingZone?.session(session, didUpdate: frame)
     }
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {

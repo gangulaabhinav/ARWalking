@@ -50,16 +50,27 @@ class ARWalkingZone {
         floorModelEntity.transform.translation += floorPlaneAnchor.center
     }
 
-    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) ->ARWalkingZoneRay.RayCastResult {
         let cameraTransform = frame.camera.transform
         let walkingZoneTransform = getARWalkingZoneTransform(planeTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
         walkingZoneEntity.transform = Transform(matrix: walkingZoneTransform)
 
         let cameraFloorDstance = getCameraFloorDstance(floorTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
-        arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0], with: session, frame: frame)
-        arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2], with: session, frame: frame)
-        arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, width/2], with: session, frame: frame)
-        arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDstance, 0], with: session, frame: frame)
+        var surfaceResults:[ARWalkingZoneRay.RayCastResult] = []
+        surfaceResults.append(arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0], with: session, frame: frame) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2], with: session, frame: frame) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, width/2], with: session, frame: frame) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDstance, 0], with: session, frame: frame) ?? .green)
+
+        var zoneResult:ARWalkingZoneRay.RayCastResult = .green
+        for surfaceResult in surfaceResults {
+            if surfaceResult == .red {
+                zoneResult = surfaceResult
+            } else if surfaceResult == .yellow && zoneResult == .green {
+                zoneResult = surfaceResult
+            }
+        }
+        return zoneResult
     }
 
     // Plane and Camera Anchor direction udnerstanding

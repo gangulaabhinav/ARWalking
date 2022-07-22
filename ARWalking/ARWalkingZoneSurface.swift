@@ -38,11 +38,31 @@ class ARWalkingZoneSurface {
         addRays(material: material, width: width, height: height)
     }
 
-    func SetTranslation(translation: SIMD3<Float>, with session: ARSession, frame: ARFrame) {
+    func SetTranslation(translation: SIMD3<Float>, with session: ARSession, frame: ARFrame) -> ARWalkingZoneRay.RayCastResult {
         modelEntity.transform.translation = translation
+        var surfaceResult:ARWalkingZoneRay.RayCastResult = .green
+        // updated with the worst result fro all the rays, red being worst
         for ray in rays {
-            ray.update(with: session, frame: frame)
+            let rayResult = ray.update(with: session, frame: frame)
+            if rayResult == .red {
+                surfaceResult = rayResult
+            } else if rayResult == .yellow && surfaceResult == .green {
+                surfaceResult = rayResult
+            }
         }
+
+        // update color based on raycast result
+        var material = SimpleMaterial()
+        switch surfaceResult {
+        case .green:
+            material.color =  .init(tint: .green.withAlphaComponent(0.5), texture: nil)
+        case .yellow:
+            material.color =  .init(tint: .yellow.withAlphaComponent(0.5), texture: nil)
+        case .red:
+            material.color =  .init(tint: .red.withAlphaComponent(0.5), texture: nil)
+        }
+        modelEntity.model?.materials = [material]
+        return surfaceResult
     }
 
     func addRays(material: Material, width: Float, height: Float) {
