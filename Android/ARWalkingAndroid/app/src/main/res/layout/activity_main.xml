@@ -7,30 +7,31 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/publish"
+        android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Publish"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Start"
+        app:layout_constraintEnd_toStartOf="@+id/stop"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/subscribe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Subscribe"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/publish" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
+        app:layout_constraintStart_toEndOf="@id/start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/settings_container"
+        android:name="com.microsoft.arwalking.android.SettingsFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subscribe" />
+        app:layout_constraintTop_toBottomOf="@+id/stop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

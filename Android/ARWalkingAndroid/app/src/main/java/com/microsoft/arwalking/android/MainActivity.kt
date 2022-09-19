@@ -10,16 +10,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.publish).setOnClickListener {
+        findViewById<Button>(R.id.start).setOnClickListener {
             val intent = Intent(this, RttLocationService::class.java)
-            intent.action = RttLocationService.ACTION_START_PUBLISH
-
-            startForegroundService(intent)
-        }
-
-        findViewById<Button>(R.id.subscribe).setOnClickListener {
-            val intent = Intent(this, RttLocationService::class.java)
-            intent.action = RttLocationService.ACTION_START_SUBSCRIBE
+            intent.action = RttLocationService.ACTION_START
 
             startForegroundService(intent)
         }
