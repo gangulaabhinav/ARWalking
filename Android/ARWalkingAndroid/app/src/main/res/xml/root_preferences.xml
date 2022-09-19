@@ -1,5 +1,10 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <Preference
+        app:key="permissions"
+        app:title="Ensure Permissions"
+        />
+
     <PreferenceCategory app:title="Mode">
 
         <SwitchPreferenceCompat

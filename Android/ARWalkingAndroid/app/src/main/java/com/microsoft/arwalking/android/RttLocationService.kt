@@ -1,5 +1,6 @@
 package com.microsoft.arwalking.android
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -7,6 +8,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.wifi.aware.*
+import android.net.wifi.rtt.RangingRequest
+import android.net.wifi.rtt.RangingResult
+import android.net.wifi.rtt.RangingResultCallback
 import android.net.wifi.rtt.WifiRttManager
 import android.os.IBinder
 import android.util.Log
@@ -67,9 +71,31 @@ class RttLocationService : Service() {
         val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
         mNotificationManager.createNotificationChannel(notificationChannel)
 
-        updateNotification("Service Started")
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_AWARE) || mWifiAwareManager == null) {
+            updateNotification("Wifi Aware feature not available")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        else if(!packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_RTT) || mWifiRttManager == null) {
+            updateNotification("Wifi RTT feature not available")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        else if (!mWifiAwareManager!!.isAvailable) {
+            updateNotification("Wifi Aware not enabled")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        else if (!mWifiRttManager!!.isAvailable) {
+            updateNotification("Wifi RTT not enabled")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        else {
+            updateNotification("Service Started")
 
-        startWifiAware()
+            startWifiAware()
+        }
 
         return START_REDELIVER_INTENT
     }
@@ -77,12 +103,13 @@ class RttLocationService : Service() {
     private fun updateNotification(message: String, newNotification: Boolean = false) {
         Log.i(LOG_TAG, "Update notification: $message")
 
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("RTT Location Service")
-            .setContentText(message)
-            .setOngoing(!newNotification)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).run {
+            setContentTitle("RTT Location Service")
+            setContentText(message)
+            setOngoing(!newNotification)
+            setSmallIcon(R.drawable.ic_launcher_foreground)
+            build()
+        }
 
         if (newNotification) {
             mNotificationManager.notify(++mLastNotificationId, notification)
@@ -93,23 +120,7 @@ class RttLocationService : Service() {
     }
 
     private fun startWifiAware() {
-        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_AWARE) || mWifiAwareManager == null) {
-            updateNotification("Wifi Aware feature not available")
-            return
-        }
-        else if(!packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_RTT) || mWifiRttManager == null) {
-            updateNotification("Wifi RTT feature not available")
-            return
-        }
-        else if (!mWifiAwareManager!!.isAvailable) {
-            updateNotification("Wifi Aware not enabled")
-            return
-        }
-        else if (!mWifiRttManager!!.isAvailable) {
-            updateNotification("Wifi RTT not enabled")
-            return
-        }
-
+        peerList.clear()
         mWifiAwareManager!!.attach(object: AttachCallback() {
             override fun onAttachFailed() {
                 super.onAttachFailed()
@@ -139,10 +150,12 @@ class RttLocationService : Service() {
         byteBuffer.putDouble(mPreferences.getString("coordinateY", "0")!!.toDouble())
         byteBuffer.putDouble(mPreferences.getString("coordinateZ", "0")!!.toDouble())
 
-        val config = PublishConfig.Builder()
-            .setServiceName(WIFI_AWARE_SERVICE_NAME)
-            .setServiceSpecificInfo(byteBuffer.array())
-            .build()
+        val config = PublishConfig.Builder().run {
+            setServiceName(WIFI_AWARE_SERVICE_NAME)
+            setServiceSpecificInfo(byteBuffer.array())
+            setRangingEnabled(true)
+            build()
+        }
 
         mWifiAwareSession?.publish(config, object: DiscoverySessionCallback() {
             override fun onPublishStarted(session: PublishDiscoverySession) {
@@ -185,6 +198,8 @@ class RttLocationService : Service() {
                     Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z")
 
                     peerList[peerHandle] = Location(x, y, z)
+
+                    startRangingRequest()
                 }
             }
 
@@ -197,6 +212,33 @@ class RttLocationService : Service() {
                 updateNotification("Wifi Aware session terminated", true)
             }
         }, null)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startRangingRequest() {
+        val request = RangingRequest.Builder().run {
+            peerList.forEach { (peerHandle, location) ->
+                addWifiAwarePeer(peerHandle)
+            }
+            build()
+        }
+
+        mWifiRttManager!!.startRanging(request, mainExecutor, object: RangingResultCallback() {
+            override fun onRangingFailure(result: Int) {
+                Log.i(LOG_TAG, "Ranging Request failed with: $result")
+            }
+
+            override fun onRangingResults(results: MutableList<RangingResult>) {
+                results.forEach { result ->
+                    if (result.status != RangingResult.STATUS_SUCCESS) {
+                        Log.i(LOG_TAG, "Ranging result failed for peer: ${result.peerHandle}, status: ${result.status}")
+                        return
+                    }
+
+                    Log.i(LOG_TAG, "Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
+                }
+            }
+        })
     }
 
     override fun onBind(intent: Intent): IBinder? {
