@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.wifi.aware.*
 import android.net.wifi.rtt.RangingRequest
@@ -61,6 +60,8 @@ class RttLocationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
             updateNotification("Stopping Service")
+            mWifiAwareSession?.close()
+            mWifiAwareSession = null
             stopSelf()
             return START_NOT_STICKY
         }
@@ -171,11 +172,33 @@ class RttLocationService : Service() {
     private fun subscribe() {
         val config = SubscribeConfig.Builder()
             .setServiceName(WIFI_AWARE_SERVICE_NAME)
+            .setMaxDistanceMm(50000)
             .build()
 
         mWifiAwareSession?.subscribe(config, object: DiscoverySessionCallback() {
             override fun onSubscribeStarted(session: SubscribeDiscoverySession) {
                 updateNotification("Wifi Aware subscribe started", true)
+            }
+
+            override fun onServiceDiscoveredWithinRange(peerHandle: PeerHandle?, serviceSpecificInfo: ByteArray?, matchFilter: MutableList<ByteArray>?, distanceMm: Int) {
+                if (peerHandle == null) {
+                    return
+                }
+
+                Log.i(LOG_TAG, "Wifi Aware Service Discovered With Range: $peerHandle")
+
+                serviceSpecificInfo?.let {
+                    val bytesBuffer = ByteBuffer.wrap(it)
+                    val x = bytesBuffer.double
+                    val y = bytesBuffer.double
+                    val z = bytesBuffer.double
+
+                    Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z, mm: $distanceMm")
+
+                    peerList[peerHandle] = Location(x, y, z)
+
+                    startRangingRequest()
+                }
             }
 
             override fun onServiceDiscovered(
@@ -231,7 +254,7 @@ class RttLocationService : Service() {
             override fun onRangingResults(results: MutableList<RangingResult>) {
                 results.forEach { result ->
                     if (result.status != RangingResult.STATUS_SUCCESS) {
-                        Log.i(LOG_TAG, "Ranging result failed for peer: ${result.peerHandle}, status: ${result.status}")
+                        Log.i(LOG_TAG, "Ranging failed for peer: ${result.peerHandle}, status: ${result.status}")
                         return
                     }
 
