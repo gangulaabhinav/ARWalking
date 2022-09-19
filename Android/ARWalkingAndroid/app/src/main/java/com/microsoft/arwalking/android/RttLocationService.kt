@@ -11,6 +11,7 @@ import android.net.wifi.rtt.RangingRequest
 import android.net.wifi.rtt.RangingResult
 import android.net.wifi.rtt.RangingResultCallback
 import android.net.wifi.rtt.WifiRttManager
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -49,10 +50,13 @@ class RttLocationService : Service() {
 
     private var mWifiAwareSession: WifiAwareSession? = null
     private var mLastNotificationId = NOTIFICATION_ID
+    private var mLoopRangingRequest = false;
 
     private val peerList: HashMap<PeerHandle, Location> = HashMap()
 
     override fun onDestroy() {
+        mLoopRangingRequest = false
+
         mWifiAwareSession?.close()
         super.onDestroy()
     }
@@ -60,8 +64,11 @@ class RttLocationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
             updateNotification("Stopping Service")
+            mLoopRangingRequest = false
+
             mWifiAwareSession?.close()
             mWifiAwareSession = null
+
             stopSelf()
             return START_NOT_STICKY
         }
@@ -154,13 +161,25 @@ class RttLocationService : Service() {
         val config = PublishConfig.Builder().run {
             setServiceName(WIFI_AWARE_SERVICE_NAME)
             setServiceSpecificInfo(byteBuffer.array())
-            setRangingEnabled(true)
+//            setRangingEnabled(true)
             build()
         }
 
         mWifiAwareSession?.publish(config, object: DiscoverySessionCallback() {
             override fun onPublishStarted(session: PublishDiscoverySession) {
                 updateNotification("Wifi Aware publish started", true)
+
+                val configUpdated = PublishConfig.Builder().run {
+                    setServiceName(WIFI_AWARE_SERVICE_NAME)
+                    setServiceSpecificInfo(byteBuffer.array())
+                    setRangingEnabled(true)
+                    build()
+                }
+                session.updatePublish(configUpdated)
+            }
+
+            override fun onSessionConfigUpdated() {
+                Log.i(LOG_TAG, "Wifi Aware publish enabled ranging")
             }
 
             override fun onSessionTerminated() {
@@ -172,12 +191,15 @@ class RttLocationService : Service() {
     private fun subscribe() {
         val config = SubscribeConfig.Builder()
             .setServiceName(WIFI_AWARE_SERVICE_NAME)
-            .setMaxDistanceMm(50000)
+//            .setMaxDistanceMm(50000)
             .build()
 
         mWifiAwareSession?.subscribe(config, object: DiscoverySessionCallback() {
             override fun onSubscribeStarted(session: SubscribeDiscoverySession) {
                 updateNotification("Wifi Aware subscribe started", true)
+
+                mLoopRangingRequest = true
+                startRangingRequest()
             }
 
             override fun onServiceDiscoveredWithinRange(peerHandle: PeerHandle?, serviceSpecificInfo: ByteArray?, matchFilter: MutableList<ByteArray>?, distanceMm: Int) {
@@ -196,8 +218,6 @@ class RttLocationService : Service() {
                     Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z, mm: $distanceMm")
 
                     peerList[peerHandle] = Location(x, y, z)
-
-                    startRangingRequest()
                 }
             }
 
@@ -221,8 +241,6 @@ class RttLocationService : Service() {
                     Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z")
 
                     peerList[peerHandle] = Location(x, y, z)
-
-                    startRangingRequest()
                 }
             }
 
@@ -239,6 +257,18 @@ class RttLocationService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun startRangingRequest() {
+        if (!mLoopRangingRequest) {
+            return
+        }
+
+        if (peerList.size <= 0) {
+            Log.i(LOG_TAG, "Peer list is empty, skipping ranging")
+            Handler(mainLooper).postDelayed({
+                startRangingRequest()
+            }, 1000)
+            return
+        }
+
         val request = RangingRequest.Builder().run {
             peerList.forEach { (peerHandle, location) ->
                 addWifiAwarePeer(peerHandle)
@@ -249,17 +279,24 @@ class RttLocationService : Service() {
         mWifiRttManager!!.startRanging(request, mainExecutor, object: RangingResultCallback() {
             override fun onRangingFailure(result: Int) {
                 Log.i(LOG_TAG, "Ranging Request failed with: $result")
+                Handler(mainLooper).postDelayed({
+                    startRangingRequest()
+                }, 1000)
             }
 
             override fun onRangingResults(results: MutableList<RangingResult>) {
                 results.forEach { result ->
                     if (result.status != RangingResult.STATUS_SUCCESS) {
                         Log.i(LOG_TAG, "Ranging failed for peer: ${result.peerHandle}, status: ${result.status}")
-                        return
                     }
-
-                    Log.i(LOG_TAG, "Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
+                    else {
+                        Log.i(LOG_TAG, "Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
+                    }
                 }
+
+                Handler(mainLooper).postDelayed({
+                    startRangingRequest()
+                }, 1000)
             }
         })
     }
