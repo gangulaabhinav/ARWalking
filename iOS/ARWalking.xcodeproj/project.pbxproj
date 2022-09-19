@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		9E6C2235288B35D00053E7AC /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9E6C2234288B35D00053E7AC /* sound.mp3 */; };
+		9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */; };
 		9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */; };
 		9ED031852885CCEC00363986 /* ARWalkingZoneRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */; };
+		AD441FFE28D846D700F517B7 /* BluetoothLEView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */; };
 		AD46A1582881D1BA0070641A /* ARWalkingZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD46A1572881D1BA0070641A /* ARWalkingZone.swift */; };
 		ADCB0E1E2869C22700A0BF16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB0E1D2869C22700A0BF16 /* AppDelegate.swift */; };
 		ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB0E1F2869C22700A0BF16 /* ARWalkingView.swift */; };
@@ -39,8 +41,10 @@
 
 /* Begin PBXFileReference section */
 		9E6C2234288B35D00053E7AC /* sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sound.mp3; sourceTree = "<group>"; };
+		9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorMapView.swift; sourceTree = "<group>"; };
 		9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneSurface.swift; sourceTree = "<group>"; };
 		9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneRay.swift; sourceTree = "<group>"; };
+		AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothLEView.swift; sourceTree = "<group>"; };
 		AD46A1572881D1BA0070641A /* ARWalkingZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZone.swift; sourceTree = "<group>"; };
 		ADCB0E1A2869C22700A0BF16 /* ARWalking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARWalking.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADCB0E1D2869C22700A0BF16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -109,6 +113,8 @@
 				AD46A1572881D1BA0070641A /* ARWalkingZone.swift */,
 				9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */,
 				9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */,
+				AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */,
+				9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */,
 				ADCB0E232869C22800A0BF16 /* Assets.xcassets */,
 				ADCB0E252869C22800A0BF16 /* Preview Content */,
 			);
@@ -273,6 +279,8 @@
 			files = (
 				AD46A1582881D1BA0070641A /* ARWalkingZone.swift in Sources */,
 				9ED031852885CCEC00363986 /* ARWalkingZoneRay.swift in Sources */,
+				AD441FFE28D846D700F517B7 /* BluetoothLEView.swift in Sources */,
+				9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */,
 				ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */,
 				9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */,
 				ADCB0E1E2869C22700A0BF16 /* AppDelegate.swift in Sources */,
@@ -437,10 +445,12 @@
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Need for AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arkit bluetooth-le";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -468,10 +478,10 @@
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Need for AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arkit bluetooth-le";
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

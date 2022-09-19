@@ -10,8 +10,33 @@ import RealityKit
 import SwiftUI
 
 struct ARWalkingView : View {
+    @ViewBuilder
+    private func getNavigationView() -> some View {
+        VStack(spacing: 0) {
+            BluetoothLEView()
+            IndoorMapView()
+                .frame(maxWidth: .infinity)
+        }
+    }
+    
     var body: some View {
-        return ARViewContainer().edgesIgnoringSafeArea(.all)
+        GeometryReader { ruler in
+            if ruler.size.width < ruler.size.height { // Portrait
+                VStack(spacing: 0) {
+                    getNavigationView()
+                        .frame(maxWidth: .infinity)
+                    ARViewContainer().edgesIgnoringSafeArea(.all)
+                        .frame(maxWidth: .infinity)
+                }
+            } else { // landscape
+                HStack(spacing: 0) {
+                    getNavigationView()
+                        .frame(maxWidth: .infinity)
+                    ARViewContainer().edgesIgnoringSafeArea(.all)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+        }
     }
 }
 
