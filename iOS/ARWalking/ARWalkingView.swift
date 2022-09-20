@@ -11,56 +11,58 @@ import SwiftUI
 
 struct ARWalkingView : View {
     @ViewBuilder
-    private func getNavigationView() -> some View {
+    private func getView() -> some View {
         VStack(spacing: 0) {
             BluetoothLEView()
             IndoorMapView()
                 .frame(maxWidth: .infinity)
         }
+            .frame(maxWidth: .infinity)
+        ARViewContainer()
+            .edgesIgnoringSafeArea(.all)
+            .frame(maxWidth: .infinity)
     }
     
     var body: some View {
         GeometryReader { ruler in
             if ruler.size.width < ruler.size.height { // Portrait
                 VStack(spacing: 0) {
-                    getNavigationView()
-                        .frame(maxWidth: .infinity)
-                    ARViewContainer().edgesIgnoringSafeArea(.all)
-                        .frame(maxWidth: .infinity)
+                    getView()
                 }
             } else { // landscape
                 HStack(spacing: 0) {
-                    getNavigationView()
-                        .frame(maxWidth: .infinity)
-                    ARViewContainer().edgesIgnoringSafeArea(.all)
-                        .frame(maxWidth: .infinity)
+                    getView()
                 }
             }
         }
     }
 }
 
-final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
+struct ARViewContainer: UIViewRepresentable {
+    var arWalkingSessionDelegate = ARWalkingSessionDelegate()
+    
+    func makeUIView(context: Context) -> ARView {
+        return arWalkingSessionDelegate.arView
+    }
+    
+    func updateUIView(_ uiView: ARView, context: Context) {
+        return
+    }
+}
+
+final class ARWalkingSessionDelegate: NSObject, ARSessionDelegate {
     let arView: ARView = ARView(frame: .zero)
     var arWalkingZone: ARWalkingZone?
 
     override init() {
         super.init()
-        arView.session.delegate = self
-    }
-    
-    func makeUIView(context: Context) -> ARView {
         // configure plane detection
         arView.automaticallyConfigureSession = true
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         configuration.environmentTexturing = .automatic
         arView.session.run(configuration)
-        return arView
-    }
-    
-    func updateUIView(_ uiView: ARView, context: Context) {
-        return
+        arView.session.delegate = self
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -88,7 +90,7 @@ final class ARViewContainer: NSObject, UIViewRepresentable, ARSessionDelegate {
                             arWalkingZone = ARWalkingZone(with: arView.scene, floorPlaneAnchor: planeAnchor)
                         }
                         arWalkingZone?.onFloorUpdated(with: planeAnchor)
-                        
+
                     default:
                         continue
                     }
