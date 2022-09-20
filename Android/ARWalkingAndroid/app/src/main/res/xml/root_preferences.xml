@@ -1,0 +1,44 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="permissions"
+        app:title="Ensure Permissions"
+        />
+
+    <PreferenceCategory app:title="Mode">
+
+        <SwitchPreferenceCompat
+            app:key="publish"
+            app:title="Publish" />
+
+        <SwitchPreferenceCompat
+            app:key="subscribe"
+            app:title="Subscribe" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Publish Settings" app:dependency="publish">
+        <EditTextPreference
+            app:key="coordinateX"
+            app:title="X Coordinate"
+            app:defaultValue="0"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="coordinateY"
+            app:title="Y Coordinate"
+            app:defaultValue="0"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="coordinateZ"
+            app:title="Z Coordinate"
+            app:defaultValue="0"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Subscribe Settings" app:dependency="subscribe">
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
