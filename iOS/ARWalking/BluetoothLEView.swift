@@ -8,36 +8,19 @@
 import SwiftUI
 import CoreBluetooth
 
-protocol BluetoothLEViewDelegate {
-    func appendLog(_ message: String, status: String)
-}
+struct BluetoothLEView: View {
 
-struct BluetoothLEView: View, BluetoothLEViewDelegate {
-    
-    let timeFormatter = DateFormatter()
-
-    var bleManager: BluetoothLEManager!
-
-    @State var logText = "Sample small text"
-    @State var bleStatus = "Unknown"
-    var x = "2.112"
-    
-    init() {
-        bleManager = BluetoothLEManager(bluetoothLEViewDelegate: self)
-    }
-    
+    @ObservedObject var bleManager = BluetoothLEManager()
     var body: some View {
         VStack {
-            Text("Status: " + bleStatus)
-            Text("x: " + x + ", y: 0.0, z = 0.0")
+            //TextField("Your Name", text: $bleManager.logText)
+            HStack {
+                Text(bleManager.bleStatus)
+                Divider()
+                    .frame(height: 20)
+                Text("x: " + bleManager.x)
+            }
         }
-    }
-    
-    func appendLog(_ message: String, status: String) {
-        let logLine = "\(timeFormatter.string(from: Date())) \(message)"
-        print("DEBUG: \(logLine)")
-        logText.append("\n\(logLine)")
-        bleStatus = status
     }
 }
 
@@ -47,7 +30,9 @@ struct BluetoothLEView_Previews: PreviewProvider {
     }
 }
 
-class BluetoothLEManager: NSObject {
+class BluetoothLEManager: NSObject, ObservableObject {
+    let timeFormatter = DateFormatter()
+
     // BLE related properties
     let uuidService = CBUUID(string: "25AE1441-05D3-4C5B-8281-93D4E07420CF")
     let uuidCharForRead = CBUUID(string: "25AE1442-05D3-4C5B-8281-93D4E07420CF")
@@ -56,7 +41,10 @@ class BluetoothLEManager: NSObject {
     
     var bleCentral: CBCentralManager!
     var connectedPeripheral: CBPeripheral?
-    var bluetoothLEViewDelegate: BluetoothLEViewDelegate
+
+    @Published var logText = "Sample small text"
+    @Published var bleStatus = "Unknown"
+    @Published var x = "2.112"
 
     enum BLELifecycleState: String {
         case bluetoothNotReady
@@ -70,16 +58,12 @@ class BluetoothLEManager: NSObject {
     var lifecycleState = BLELifecycleState.bluetoothNotReady {
         didSet {
             guard lifecycleState != oldValue else { return }
-            bluetoothLEViewDelegate.appendLog("state = \(lifecycleState)", status: bleGetStatusString())
-//            if oldValue == .connected {
-//                labelSubscription.text = "Not subscribed"
-//            }
+            appendLog("state = \(lifecycleState)")
         }
     }
 
-    init(bluetoothLEViewDelegate: BluetoothLEViewDelegate) {
+    override init() {
         // using DispatchQueue.main means we can update UI directly from delegate methods
-        self.bluetoothLEViewDelegate = bluetoothLEViewDelegate
         super.init()
         bleCentral = CBCentralManager(delegate: self, queue: DispatchQueue.main)
     }
@@ -90,17 +74,12 @@ class BluetoothLEManager: NSObject {
             lifecycleState = .bluetoothNotReady
             return
         }
-
-        //if userWantsToScanAndConnect {
-        if true {
-            if let oldPeripheral = connectedPeripheral {
-                bleCentral.cancelPeripheralConnection(oldPeripheral)
-            }
-            connectedPeripheral = nil
-            bleScan()
-        } else {
-            bleDisconnect()
+        
+        if let oldPeripheral = connectedPeripheral {
+            bleCentral.cancelPeripheralConnection(oldPeripheral)
         }
+        connectedPeripheral = nil
+        bleScan()
     }
 
     func bleScan() {
@@ -126,7 +105,7 @@ class BluetoothLEManager: NSObject {
 
     func bleReadCharacteristic(uuid: CBUUID) {
         guard let characteristic = getCharacteristic(uuid: uuid) else {
-            bluetoothLEViewDelegate.appendLog("ERROR: read failed, characteristic unavailable, uuid = \(uuid.uuidString)", status: bleGetStatusString())
+            appendLog("ERROR: read failed, characteristic unavailable, uuid = \(uuid.uuidString)")
             return
         }
         connectedPeripheral?.readValue(for: characteristic)
@@ -134,7 +113,7 @@ class BluetoothLEManager: NSObject {
 
     func bleWriteCharacteristic(uuid: CBUUID, data: Data) {
         guard let characteristic = getCharacteristic(uuid: uuid) else {
-            bluetoothLEViewDelegate.appendLog("ERROR: write failed, characteristic unavailable, uuid = \(uuid.uuidString)", status: bleGetStatusString())
+            appendLog("ERROR: write failed, characteristic unavailable, uuid = \(uuid.uuidString)")
             return
         }
         connectedPeripheral?.writeValue(data, for: characteristic, type: .withResponse)
@@ -160,22 +139,29 @@ class BluetoothLEManager: NSObject {
             return bleCentral.state.stringValue
         }
     }
+    
+    func appendLog(_ message: String) {
+        let logLine = "\(timeFormatter.string(from: Date())) \(message)"
+        print("DEBUG: \(logLine)")
+        logText.append("\n\(logLine)")
+        bleStatus = bleGetStatusString()
+    }
 }
 
 // MARK: - CBCentralManagerDelegate
 extension BluetoothLEManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        bluetoothLEViewDelegate.appendLog("central didUpdateState: \(central.state.stringValue)", status: bleGetStatusString())
+        appendLog("central didUpdateState: \(central.state.stringValue)")
         bleRestartLifecycle()
     }
 
     func centralManager(_ central: CBCentralManager,
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        bluetoothLEViewDelegate.appendLog("didDiscover {name = \(peripheral.name ?? String("nil"))}", status: bleGetStatusString())
+        appendLog("didDiscover {name = \(peripheral.name ?? String("nil"))}")
 
         guard connectedPeripheral == nil else {
-            bluetoothLEViewDelegate.appendLog("didDiscover ignored (connectedPeripheral already set)", status: bleGetStatusString())
+            appendLog("didDiscover ignored (connectedPeripheral already set)")
             return
         }
 
@@ -184,7 +170,7 @@ extension BluetoothLEManager: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        bluetoothLEViewDelegate.appendLog("didConnect", status: bleGetStatusString())
+        appendLog("didConnect")
 
         lifecycleState = .connectedDiscovering
         peripheral.delegate = self
@@ -193,21 +179,21 @@ extension BluetoothLEManager: CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         if peripheral === connectedPeripheral {
-            bluetoothLEViewDelegate.appendLog("didFailToConnect", status: bleGetStatusString())
+            appendLog("didFailToConnect")
             connectedPeripheral = nil
             bleRestartLifecycle()
         } else {
-            bluetoothLEViewDelegate.appendLog("didFailToConnect, unknown peripheral, ingoring", status: bleGetStatusString())
+            appendLog("didFailToConnect, unknown peripheral, ingoring")
         }
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral === connectedPeripheral {
-            bluetoothLEViewDelegate.appendLog("didDisconnect", status: bleGetStatusString())
+            appendLog("didDisconnect")
             connectedPeripheral = nil
             bleRestartLifecycle()
         } else {
-            bluetoothLEViewDelegate.appendLog("didDisconnect, unknown peripheral, ingoring", status: bleGetStatusString())
+            appendLog("didDisconnect, unknown peripheral, ingoring")
         }
     }
 }
@@ -215,70 +201,69 @@ extension BluetoothLEManager: CBCentralManagerDelegate {
 extension BluetoothLEManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let service = peripheral.services?.first(where: { $0.uuid == uuidService }) else {
-            bluetoothLEViewDelegate.appendLog("ERROR: didDiscoverServices, service NOT found\nerror = \(String(describing: error)), disconnecting", status: bleGetStatusString())
+            appendLog("ERROR: didDiscoverServices, service NOT found\nerror = \(String(describing: error)), disconnecting")
             bleCentral.cancelPeripheralConnection(peripheral)
             return
         }
 
-        bluetoothLEViewDelegate.appendLog("didDiscoverServices, service found", status: bleGetStatusString())
+        appendLog("didDiscoverServices, service found")
         peripheral.discoverCharacteristics([uuidCharForRead, uuidCharForWrite, uuidCharForIndicate], for: service)
     }
 
     func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
-        bluetoothLEViewDelegate.appendLog("didModifyServices", status: bleGetStatusString())
+        appendLog("didModifyServices")
         // usually this method is called when Android application is terminated
         if invalidatedServices.first(where: { $0.uuid == uuidService }) != nil {
-            bluetoothLEViewDelegate.appendLog("disconnecting because peripheral removed the required service", status: bleGetStatusString())
+            appendLog("disconnecting because peripheral removed the required service")
             bleCentral.cancelPeripheralConnection(peripheral)
         }
     }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        bluetoothLEViewDelegate.appendLog("didDiscoverCharacteristics \(error == nil ? "OK" : "error: \(String(describing: error))")", status: bleGetStatusString())
+        appendLog("didDiscoverCharacteristics \(error == nil ? "OK" : "error: \(String(describing: error))")")
 
         if let charIndicate = service.characteristics?.first(where: { $0.uuid == uuidCharForIndicate }) {
             peripheral.setNotifyValue(true, for: charIndicate)
         } else {
-            bluetoothLEViewDelegate.appendLog("WARN: characteristic for indication not found", status: bleGetStatusString())
+            appendLog("WARN: characteristic for indication not found")
             lifecycleState = .connected
         }
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
-            bluetoothLEViewDelegate.appendLog("didUpdateValue error: \(String(describing: error))", status: bleGetStatusString())
+            appendLog("didUpdateValue error: \(String(describing: error))")
             return
         }
 
         let data = characteristic.value ?? Data()
         let stringValue = String(data: data, encoding: .utf8) ?? ""
         if characteristic.uuid == uuidCharForRead {
-//            textFieldDataForRead.text = stringValue
+            x = stringValue
         } else if characteristic.uuid == uuidCharForIndicate {
-//            textFieldDataForIndicate.text = stringValue
+            x = stringValue
         }
-        bluetoothLEViewDelegate.appendLog("didUpdateValue '\(stringValue)'", status: bleGetStatusString())
+        appendLog("didUpdateValue '\(stringValue)'")
     }
 
     func peripheral(_ peripheral: CBPeripheral,
                     didWriteValueFor characteristic: CBCharacteristic,
                     error: Error?) {
-        bluetoothLEViewDelegate.appendLog("didWrite \(error == nil ? "OK" : "error: \(String(describing: error))")", status: bleGetStatusString())
+        appendLog("didWrite \(error == nil ? "OK" : "error: \(String(describing: error))")")
     }
 
     func peripheral(_ peripheral: CBPeripheral,
                     didUpdateNotificationStateFor characteristic: CBCharacteristic,
                     error: Error?) {
         guard error == nil else {
-            bluetoothLEViewDelegate.appendLog("didUpdateNotificationState error\n\(String(describing: error))", status: bleGetStatusString())
+            appendLog("didUpdateNotificationState error\n\(String(describing: error))")
             lifecycleState = .connected
             return
         }
 
         if characteristic.uuid == uuidCharForIndicate {
             let info = characteristic.isNotifying ? "Subscribed" : "Not subscribed"
-//            labelSubscription.text = info
-            bluetoothLEViewDelegate.appendLog(info, status: bleGetStatusString())
+            appendLog(info)
         }
         lifecycleState = .connected
     }
