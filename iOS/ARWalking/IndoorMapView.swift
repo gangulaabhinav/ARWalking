@@ -10,9 +10,10 @@ import SwiftUI
 struct IndoorMapView: View {
     var body: some View {
         ZStack {
-            Image("Example-House-Floor-Plan-1")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+//            Image("Example-House-Floor-Plan-1")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+            DemoMapView()
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))

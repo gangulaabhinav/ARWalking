@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9E6C2235288B35D00053E7AC /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9E6C2234288B35D00053E7AC /* sound.mp3 */; };
 		9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */; };
+		9EB84B2728DA38AE0003A3CF /* DemoMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2628DA38AE0003A3CF /* DemoMapView.swift */; };
 		9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */; };
 		9ED031852885CCEC00363986 /* ARWalkingZoneRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */; };
 		AD441FFE28D846D700F517B7 /* BluetoothLEView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */; };
@@ -42,6 +43,7 @@
 /* Begin PBXFileReference section */
 		9E6C2234288B35D00053E7AC /* sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sound.mp3; sourceTree = "<group>"; };
 		9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorMapView.swift; sourceTree = "<group>"; };
+		9EB84B2628DA38AE0003A3CF /* DemoMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMapView.swift; sourceTree = "<group>"; };
 		9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneSurface.swift; sourceTree = "<group>"; };
 		9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneRay.swift; sourceTree = "<group>"; };
 		AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothLEView.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */,
 				9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */,
 				AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */,
+				9EB84B2628DA38AE0003A3CF /* DemoMapView.swift */,
 				9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */,
 				ADCB0E232869C22800A0BF16 /* Assets.xcassets */,
 				ADCB0E252869C22800A0BF16 /* Preview Content */,
@@ -279,6 +282,7 @@
 			files = (
 				AD46A1582881D1BA0070641A /* ARWalkingZone.swift in Sources */,
 				9ED031852885CCEC00363986 /* ARWalkingZoneRay.swift in Sources */,
+				9EB84B2728DA38AE0003A3CF /* DemoMapView.swift in Sources */,
 				AD441FFE28D846D700F517B7 /* BluetoothLEView.swift in Sources */,
 				9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */,
 				ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */,
