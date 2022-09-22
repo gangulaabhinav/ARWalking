@@ -15,12 +15,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             ActivityResultContracts.RequestMultiplePermissions()) { isGranted: Map<String, Boolean> ->
     }
 
-    fun hasLocationPermissions(): Boolean {
+    private fun hasLocationPermissions(): Boolean {
         return context?.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && context?.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun hasBackgroundLocationPermission(): Boolean {
+    private fun hasBackgroundLocationPermission(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                 || context?.checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
     }

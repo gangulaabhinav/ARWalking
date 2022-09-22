@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.*
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.MacAddress
 import android.net.wifi.aware.*
 import android.net.wifi.rtt.RangingRequest
 import android.net.wifi.rtt.RangingResult
@@ -13,6 +15,8 @@ import android.net.wifi.rtt.RangingResultCallback
 import android.net.wifi.rtt.WifiRttManager
 import android.os.Handler
 import android.os.IBinder
+import android.os.PowerManager
+import android.os.PowerManager.WakeLock
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
@@ -28,7 +32,7 @@ class RttLocationService : Service() {
         private const val NOTIFICATION_CHANNEL_NAME = "General"
         private const val NOTIFICATION_ID = 1
 
-        private const val WIFI_AWARE_SERVICE_NAME = "ARWalkingRTT"
+        private const val WIFI_AWARE_SERVICE_NAME = "General"
 
         const val ACTION_START = "action_start"
         const val ACTION_STOP = "action_stop"
@@ -50,12 +54,23 @@ class RttLocationService : Service() {
 
     private var mWifiAwareSession: WifiAwareSession? = null
     private var mLastNotificationId = NOTIFICATION_ID
-    private var mLoopRangingRequest = false;
+    private var mLoopRangingRequest = false
 
-    private val peerList: HashMap<PeerHandle, Location> = HashMap()
+    private var mActivePublishSession: PublishDiscoverySession? = null
+    private var mActiveSubscribeSession: SubscribeDiscoverySession? = null
+
+    private val mWakeLock: WakeLock by lazy {
+        (getSystemService(POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ARWalking:RttLocationService")
+    }
+
+    private val mPeerList: HashMap<PeerHandle, Location> = HashMap()
 
     override fun onDestroy() {
         mLoopRangingRequest = false
+
+        if (mWakeLock.isHeld) {
+            mWakeLock.release()
+        }
 
         mWifiAwareSession?.close()
         super.onDestroy()
@@ -68,6 +83,10 @@ class RttLocationService : Service() {
 
             mWifiAwareSession?.close()
             mWifiAwareSession = null
+
+            if (mWakeLock.isHeld) {
+                mWakeLock.release()
+            }
 
             stopSelf()
             return START_NOT_STICKY
@@ -128,7 +147,8 @@ class RttLocationService : Service() {
     }
 
     private fun startWifiAware() {
-        peerList.clear()
+        mWakeLock.acquire()
+        mPeerList.clear()
         mWifiAwareManager!!.attach(object: AttachCallback() {
             override fun onAttachFailed() {
                 super.onAttachFailed()
@@ -148,6 +168,11 @@ class RttLocationService : Service() {
                     subscribe()
                 }
             }
+        }, object: IdentityChangedListener() {
+            override fun onIdentityChanged(macBytes: ByteArray) {
+                val mac = MacAddress.fromBytes(macBytes)
+                Log.i(LOG_TAG, "Wifi Aware Mac Address: $mac")
+            }
         }, null)
     }
 
@@ -161,12 +186,14 @@ class RttLocationService : Service() {
         val config = PublishConfig.Builder().run {
             setServiceName(WIFI_AWARE_SERVICE_NAME)
             setServiceSpecificInfo(byteBuffer.array())
-//            setRangingEnabled(true)
+            setRangingEnabled(false)
             build()
         }
 
         mWifiAwareSession?.publish(config, object: DiscoverySessionCallback() {
             override fun onPublishStarted(session: PublishDiscoverySession) {
+                mActivePublishSession = session
+
                 updateNotification("Wifi Aware publish started", true)
 
                 val configUpdated = PublishConfig.Builder().run {
@@ -182,7 +209,22 @@ class RttLocationService : Service() {
                 Log.i(LOG_TAG, "Wifi Aware publish enabled ranging")
             }
 
+            override fun onMessageReceived(peerHandle: PeerHandle, message: ByteArray) {
+                Log.i(LOG_TAG, "Message received from peer: $peerHandle, message: ${message.decodeToString()}")
+
+                mActivePublishSession?.sendMessage(peerHandle, 2, "Pong".toByteArray())
+            }
+
+            override fun onMessageSendFailed(messageId: Int) {
+                Log.i(LOG_TAG, "Message send failed")
+            }
+
+            override fun onMessageSendSucceeded(messageId: Int) {
+                Log.i(LOG_TAG, "Message send succeeded")
+            }
+
             override fun onSessionTerminated() {
+                mActivePublishSession = null
                 updateNotification("Wifi Aware session terminated", true)
             }
         }, null)
@@ -196,6 +238,8 @@ class RttLocationService : Service() {
 
         mWifiAwareSession?.subscribe(config, object: DiscoverySessionCallback() {
             override fun onSubscribeStarted(session: SubscribeDiscoverySession) {
+                mActiveSubscribeSession = session
+
                 updateNotification("Wifi Aware subscribe started", true)
 
                 mLoopRangingRequest = true
@@ -203,56 +247,61 @@ class RttLocationService : Service() {
             }
 
             override fun onServiceDiscoveredWithinRange(peerHandle: PeerHandle?, serviceSpecificInfo: ByteArray?, matchFilter: MutableList<ByteArray>?, distanceMm: Int) {
-                if (peerHandle == null) {
-                    return
-                }
-
-                Log.i(LOG_TAG, "Wifi Aware Service Discovered With Range: $peerHandle")
-
-                serviceSpecificInfo?.let {
-                    val bytesBuffer = ByteBuffer.wrap(it)
-                    val x = bytesBuffer.double
-                    val y = bytesBuffer.double
-                    val z = bytesBuffer.double
-
-                    Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z, mm: $distanceMm")
-
-                    peerList[peerHandle] = Location(x, y, z)
-                }
+                handleServiceDiscovered(peerHandle, serviceSpecificInfo, matchFilter, distanceMm)
             }
 
-            override fun onServiceDiscovered(
-                peerHandle: PeerHandle?,
-                serviceSpecificInfo: ByteArray?,
-                matchFilter: MutableList<ByteArray>?
-            ) {
-                if (peerHandle == null) {
-                    return
-                }
-
-                Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle")
-
-                serviceSpecificInfo?.let {
-                    val bytesBuffer = ByteBuffer.wrap(it)
-                    val x = bytesBuffer.double
-                    val y = bytesBuffer.double
-                    val z = bytesBuffer.double
-
-                    Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z")
-
-                    peerList[peerHandle] = Location(x, y, z)
-                }
+            override fun onServiceDiscovered(peerHandle: PeerHandle?, serviceSpecificInfo: ByteArray?, matchFilter: MutableList<ByteArray>?) {
+                handleServiceDiscovered(peerHandle, serviceSpecificInfo, matchFilter)
             }
 
-            override fun onServiceLost(peerHandle: PeerHandle, reason: Int) {
-                peerList.remove(peerHandle)
-                Log.i(LOG_TAG, "Wifi Aware Service Lost: $peerHandle, reason: $reason")
+            //override fun onServiceLost(peerHandle: PeerHandle, reason: Int) {
+            //    mPeerList.remove(peerHandle)
+            //    Log.i(LOG_TAG, "Wifi Aware Service Lost: $peerHandle, reason: $reason")
+            //}
+
+            override fun onMessageReceived(peerHandle: PeerHandle, message: ByteArray) {
+                Log.i(LOG_TAG, "Message received from peer: $peerHandle, message: ${message.decodeToString()}")
+            }
+
+            override fun onMessageSendFailed(messageId: Int) {
+                Log.i(LOG_TAG, "Message send failed")
+            }
+
+            override fun onMessageSendSucceeded(messageId: Int) {
+                Log.i(LOG_TAG, "Message send succeeded")
             }
 
             override fun onSessionTerminated() {
+                mActiveSubscribeSession = null
+
                 updateNotification("Wifi Aware session terminated", true)
             }
         }, null)
+    }
+
+    private fun handleServiceDiscovered(peerHandle: PeerHandle?, serviceSpecificInfo: ByteArray?, matchFilter: MutableList<ByteArray>?, distanceMm: Int = -1) {
+        if (peerHandle == null) {
+            return
+        }
+
+        Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle")
+
+//        mActiveSubscribeSession?.sendMessage(peerHandle, 1, "Ping".toByteArray())
+
+        serviceSpecificInfo?.let {
+//            val bytesBuffer = ByteBuffer.wrap(it)
+//            val x = bytesBuffer.double
+//            val y = bytesBuffer.double
+//            val z = bytesBuffer.double
+
+            val x = 0.0
+            val y = 0.0
+            val z = 0.0
+
+            Log.i(LOG_TAG, "Wifi Aware Service Discovered: $peerHandle, x: $x, y: $y, z: $z")
+
+            mPeerList.putIfAbsent(peerHandle, Location(x, y, z))
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -261,7 +310,7 @@ class RttLocationService : Service() {
             return
         }
 
-        if (peerList.size <= 0) {
+        if (mPeerList.size <= 0) {
             Log.i(LOG_TAG, "Peer list is empty, skipping ranging")
             Handler(mainLooper).postDelayed({
                 startRangingRequest()
@@ -270,7 +319,7 @@ class RttLocationService : Service() {
         }
 
         val request = RangingRequest.Builder().run {
-            peerList.forEach { (peerHandle, location) ->
+            mPeerList.forEach { (peerHandle, location) ->
                 addWifiAwarePeer(peerHandle)
             }
             build()
