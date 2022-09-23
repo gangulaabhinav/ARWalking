@@ -305,6 +305,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
             }
         }
 
+        updateDevicesDisplay()
         computeLocation()
     }
 
