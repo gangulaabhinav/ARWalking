@@ -3,7 +3,6 @@ package com.microsoft.arwalking.android
 import android.content.SharedPreferences
 import android.net.wifi.aware.PeerHandle
 import android.net.wifi.rtt.RangingResult
-import android.net.wifi.rtt.RangingResultCallback
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
@@ -55,15 +54,15 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
     // NanClientCallback
     override fun onAttachedFailed() {
-        showToast("Attach failed")
+        logMessage("Attach failed")
     }
 
     override fun onInvalidService() {
-        showToast("Invalid Service")
+        logMessage("Invalid Service")
     }
 
     override fun onMessageSendFailed(i: Int, str: String?, i2: Int) {
-        showToast("Message Send Failed")
+        logMessage("Message Send Failed")
     }
 
     override fun onMessageSendSucceeded(i: Int, str: String?, i2: Int) {
@@ -148,17 +147,17 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     override fun onNanAvailable() {
-        showToast("NAN Available")
+        logMessage("NAN Available")
     }
 
     override fun onNanUnavailable() {
-        showToast("NAN Unavailable")
+        logMessage("NAN Unavailable")
     }
 
     override fun onSessionTerminated(i: Int, str: String?) {
         devices.clear()
         updateDevicesDisplay()
-        showToast("Session Terminated")
+        logMessage("Session Terminated")
     }
 
     override fun onServiceDiscovered(
@@ -167,7 +166,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         bArr: ByteArray?,
         list: MutableList<ByteArray>?
     ) {
-        showToast("Service Discovered: $peerHandle")
+        logMessage("Service Discovered: $peerHandle")
 
         nanClient.sendMessage(
             1,
@@ -179,20 +178,20 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     override fun onSubscribeStarted(str: String?) {
-        showToast("Subscribe Started")
+        logMessage("Subscribe Started")
     }
 
     override fun onPublishStarted(str: String?) {
-        showToast("Publish Started")
+        logMessage("Publish Started")
         nanClient.enableRangingForPublishedService(SERVICE_NAME, this)
     }
 
     override fun onRangingDisabled(str: String?) {
-        showToast("Ranging Disabled")
+        logMessage("Ranging Disabled")
     }
 
     override fun onRangingEnabled(str: String?) {
-        showToast("Ranging Enabled")
+        logMessage("Ranging Enabled")
     }
 
     private fun ensureDeviceAlive(peerHandle: PeerHandle): Boolean {
@@ -203,7 +202,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
                         Instant.ofEpochMilli(SystemClock.elapsedRealtime())
                 ).compareTo(Message.TIMEOUT) > 0
         ) {
-            showToast("Device removed: $peerHandle")
+            logMessage("Device removed: $peerHandle")
             devices.remove(peerHandle)
             updateDevicesDisplay()
             return false
@@ -251,7 +250,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
                 }
             }
 
-            showToast("Device Added: $peerHandle, name: $deviceName")
+            logMessage("Device Added: $peerHandle, name: $deviceName")
             devices.put(peerHandle, newDevice)
             updateDevicesDisplay()
 
@@ -279,17 +278,17 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     override fun onRangingFailure(status: Int) {
-        showToast("Ranging failed: $status")
+        logMessage("Ranging failed: $status")
     }
 
     override fun onRangingResults(results: MutableList<RangingResult>) {
         results.forEach { result ->
             if (result.status != RangingResult.STATUS_SUCCESS) {
-                showToast("Ranging failed for peer: ${result.peerHandle}, status: ${result.status}")
+                logMessage("Ranging failed for peer: ${result.peerHandle}, status: ${result.status}")
             }
             else {
                 devices[result.peerHandle]?.distance = result.distanceMm
-                showToast("Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
+                logMessage("Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
             }
         }
 
@@ -300,7 +299,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         val positionsWithDistances = devices.values
 
         if (positionsWithDistances.size < 2) {
-            Log.i(LOG_TAG, "Not enough positions for computing location: ${positionsWithDistances.size} found")
+            logMessage("Not enough positions for computing location: ${positionsWithDistances.size} found")
             return
         }
 
@@ -318,23 +317,25 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         // the answer
         val centroid = optimum.point
         updateLocationDisplay(centroid)
-        Log.i(LOG_TAG, "Location computed: $centroid")
+        logMessage("Location computed: $centroid")
         try {
             // error and geometry information; may throw SingularMatrixException depending the threshold argument provided
             val standardDeviation = optimum.getSigma(0.0)
             val covarianceMatrix = optimum.getCovariances(0.0)
-            Log.i(LOG_TAG, "standardDeviation: $standardDeviation, covarianceMatrix: $covarianceMatrix")
+            logMessage("standardDeviation: $standardDeviation, covarianceMatrix: $covarianceMatrix")
         }
         catch (e: java.lang.Exception) {
-            Log.i(LOG_TAG, "Exception calculating stdDev or covariance: ${e.message}")
+            logMessage("Exception calculating stdDev or covariance: ${e.message}")
         }
     }
 
-    private fun showToast(message: String) {
-        Log.i(LOG_TAG, "Toast: $message")
-//        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+    private fun logMessage(message: String) {
+        Log.i(LOG_TAG, "Log: $message")
     }
 
+    //
+    // Activity and UI handling
+    //
     override fun onPause() {
         nanRanger.stopRanging()
         super.onPause()
@@ -387,21 +388,12 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
                 nanClient.subscribeService(SERVICE_NAME, this, null)
             }
             else {
-                showToast("Please select a mode")
+                logMessage("Please select a mode")
             }
-
-//            val intent = Intent(this, RttLocationService::class.java)
-//            intent.action = RttLocationService.ACTION_START
-//
-//            startForegroundService(intent)
         }
 
         findViewById<Button>(R.id.stop).setOnClickListener {
             nanClient.stopSession(mode, SERVICE_NAME, this)
-//            val intent = Intent(this, RttLocationService::class.java)
-//            intent.action = RttLocationService.ACTION_STOP
-//
-//            startForegroundService(intent)
         }
     }
 
