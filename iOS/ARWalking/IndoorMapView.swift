@@ -7,13 +7,19 @@
 
 import SwiftUI
 
+protocol IndoorMapManagerProtocol {
+    associatedtype V: View   // Create a new type that conforms to View
+    func getMap() -> V
+    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path
+}
+
 struct IndoorMapView: View {
+    //let indoorMapManager = FloorMapManager()
+    let indoorMapManager = MLCPDemoMapManager()
+
     var body: some View {
         ZStack {
-//            Image("Example-House-Floor-Plan-1")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-            DemoMapView()
+            indoorMapManager.getMap()
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))

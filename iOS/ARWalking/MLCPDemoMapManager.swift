@@ -1,5 +1,5 @@
 //
-//  DemoMapView.swift
+//  MLCPDemoMapManager.swift
 //  ARWalking
 //
 //  Created by Abhinav Gangula on 20/09/22.
@@ -8,6 +8,18 @@
 import SwiftUI
 
 // Note: All the calculations are done in meters
+
+class MLCPDemoMapManager: IndoorMapManagerProtocol {
+    typealias V = DemoMapView
+    let demoMapData = DemoMapData()
+    func getMap() -> DemoMapView {
+        DemoMapView(demoMapData: demoMapData)
+    }
+
+    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
+        demoMapData.getSourceToDestinationPath(source: source, destination: destination)
+    }
+}
 
 struct DemoBoothsBox { // A row of booths for a demo booths box that can be drawn on map as a single block
     let x: CGFloat // Center x of the DemoBoothsBox
@@ -25,18 +37,11 @@ extension DemoBoothsBox {
     }
 }
 
-struct DemoMapView: View {
+struct DemoMapData {
+    // All dimensons in meters
     static let SourcePoint = CGPoint(x: 435, y: 237)
     static let DestinationPoint = CGPoint(x: 205, y: 352)
-    static let SourcePointColor: Color = .blue
-    static let DestinationPointColor: Color = .red
-    static let PointDrawSize = 12.0
-    static let SourceDestinationPathColor: Color = .blue
-    static let SourceDestinationPathLineWidth = 8.0
     static let SourceDestinationPathOffset = 10.0 // Path offset on borders
-
-    static let CanvsBackground: Color = Color(.sRGB, red: 230/255, green: 240/255, blue: 1, opacity: 1.0)
-    static let DemoBoothsColor: Color = .black
 
     let demoBoxesList = [
         DemoBoothsBox(x: 50.0 ),
@@ -53,41 +58,6 @@ struct DemoMapView: View {
         DemoBoothsBox(x: 490.0),
         DemoBoothsBox(x: 530.0),
     ]
-
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-        Canvas { context, size in
-            // Draw background
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(DemoMapView.CanvsBackground))
-            
-            // Draw a boxes
-            for box in demoBoxesList {
-                context.fill(getDemoBoothsBoxDrawPath(box: box), with: .color(DemoMapView.DemoBoothsColor))
-            }
-            context.fill(getPointDrawPath(point: DemoMapView.SourcePoint), with: .color(DemoMapView.SourcePointColor))
-            context.fill(getPointDrawPath(point: DemoMapView.DestinationPoint), with: .color(DemoMapView.DestinationPointColor))
-            context.stroke(getSourceToDestinationPath(source: DemoMapView.SourcePoint, destination: DemoMapView.DestinationPoint), with: .color(DemoMapView.SourceDestinationPathColor), lineWidth: DemoMapView.SourceDestinationPathLineWidth)
-        }
-        .edgesIgnoringSafeArea(.all)
-    }
-    
-    func getDemoBoothsBoxDrawPath(box: DemoBoothsBox) -> Path {
-        var boxPath = Path()
-        boxPath.move(to: CGPoint(x: box.x - box.width/2, y: box.y - box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y - box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y + box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x - box.width/2, y: box.y + box.length/2))
-        return boxPath
-    }
-
-    func getPointDrawPath(point: CGPoint) -> Path {
-        var squarePath = Path()
-        squarePath.move(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
-        return squarePath
-    }
 
     func getBoxIndexToRightOfPoint(point : CGPoint) -> Int {
         let totalBoxes = demoBoxesList.count
@@ -130,13 +100,13 @@ struct DemoMapView: View {
             }
             
             // Calculating path from top
-            let firstTurnPointTop = CGPoint(x: projectedSource.x, y: demoBoxesList[sourceDestinationFirstBox].y - demoBoxesList[sourceDestinationFirstBox].length/2 - DemoMapView.SourceDestinationPathOffset)
-            let secondTurnPointTop = CGPoint(x: projectedDestination.x, y: demoBoxesList[destinationSourceFirstBox].y - demoBoxesList[destinationSourceFirstBox].length/2 - DemoMapView.SourceDestinationPathOffset)
+            let firstTurnPointTop = CGPoint(x: projectedSource.x, y: demoBoxesList[sourceDestinationFirstBox].y - demoBoxesList[sourceDestinationFirstBox].length/2 - DemoMapData.SourceDestinationPathOffset)
+            let secondTurnPointTop = CGPoint(x: projectedDestination.x, y: demoBoxesList[destinationSourceFirstBox].y - demoBoxesList[destinationSourceFirstBox].length/2 - DemoMapData.SourceDestinationPathOffset)
             let topPathDistance = getPathDistance(point: projectedSource, point1: firstTurnPointTop, point2: secondTurnPointTop, point3: projectedDestination)
 
             // Calculating path from bottom
-            let firstTurnPointBottom = CGPoint(x: projectedSource.x, y: demoBoxesList[sourceDestinationFirstBox].y + demoBoxesList[sourceDestinationFirstBox].length/2 + DemoMapView.SourceDestinationPathOffset)
-            let secondTurnPointBottom = CGPoint(x: projectedDestination.x, y: demoBoxesList[destinationSourceFirstBox].y + demoBoxesList[destinationSourceFirstBox].length/2 + DemoMapView.SourceDestinationPathOffset)
+            let firstTurnPointBottom = CGPoint(x: projectedSource.x, y: demoBoxesList[sourceDestinationFirstBox].y + demoBoxesList[sourceDestinationFirstBox].length/2 + DemoMapData.SourceDestinationPathOffset)
+            let secondTurnPointBottom = CGPoint(x: projectedDestination.x, y: demoBoxesList[destinationSourceFirstBox].y + demoBoxesList[destinationSourceFirstBox].length/2 + DemoMapData.SourceDestinationPathOffset)
             let bottomPathDistance = getPathDistance(point: projectedSource, point1: firstTurnPointBottom, point2: secondTurnPointBottom, point3: projectedDestination)
             
             if topPathDistance < bottomPathDistance {
@@ -159,9 +129,9 @@ struct DemoMapView: View {
 
         var projectedX = point.x
         if boxIndex <= 0 { // befor first box,
-            projectedX = demoBoxesList[boxIndex].x - demoBoxesList[boxIndex].width/2 - DemoMapView.SourceDestinationPathOffset
+            projectedX = demoBoxesList[boxIndex].x - demoBoxesList[boxIndex].width/2 - DemoMapData.SourceDestinationPathOffset
         } else if boxIndex >= totalBoxes {
-            projectedX = demoBoxesList[boxIndex - 1].x + demoBoxesList[boxIndex - 1].width/2 + DemoMapView.SourceDestinationPathOffset
+            projectedX = demoBoxesList[boxIndex - 1].x + demoBoxesList[boxIndex - 1].width/2 + DemoMapData.SourceDestinationPathOffset
         } else {
             projectedX = (demoBoxesList[boxIndex - 1].x + demoBoxesList[boxIndex].x)/2
         }
@@ -169,8 +139,64 @@ struct DemoMapView: View {
     }
 }
 
+struct DemoMapView: View {
+    static let SourceDestinationPathLineWidth = 8.0
+    static let SourcePointColor: Color = .blue
+    static let DestinationPointColor: Color = .red
+    static let PointDrawSize = 12.0
+    static let SourceDestinationPathColor: Color = .blue
+
+
+    static let CanvsBackground: Color = Color(.sRGB, red: 230/255, green: 240/255, blue: 1, opacity: 1.0)
+    static let DemoBoothsColor: Color = .black
+
+    let demoMapData: DemoMapData
+
+    init(demoMapData: DemoMapData) {
+        self.demoMapData = demoMapData
+    }
+
+    var body: some View {
+        Canvas { context, size in
+            // Draw background
+            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(DemoMapView.CanvsBackground))
+            
+            // Draw a boxes
+            for box in demoMapData.demoBoxesList {
+                context.fill(getDemoBoothsBoxDrawPath(box: box), with: .color(DemoMapView.DemoBoothsColor))
+            }
+            context.fill(getPointDrawPath(point: DemoMapData.SourcePoint), with: .color(DemoMapView.SourcePointColor))
+            context.fill(getPointDrawPath(point: DemoMapData.DestinationPoint), with: .color(DemoMapView.DestinationPointColor))
+            context.stroke(demoMapData.getSourceToDestinationPath(source: DemoMapData.SourcePoint, destination: DemoMapData.DestinationPoint), with: .color(DemoMapView.SourceDestinationPathColor), lineWidth: DemoMapView.SourceDestinationPathLineWidth)
+        }
+        .edgesIgnoringSafeArea(.all)
+        Circle()
+            .strokeBorder(.gray, lineWidth: 4)
+            .background(Circle().fill(.blue))
+            .frame(width: 15, height: 15)
+    }
+    
+    func getDemoBoothsBoxDrawPath(box: DemoBoothsBox) -> Path {
+        var boxPath = Path()
+        boxPath.move(to: CGPoint(x: box.x - box.width/2, y: box.y - box.length/2))
+        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y - box.length/2))
+        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y + box.length/2))
+        boxPath.addLine(to: CGPoint(x: box.x - box.width/2, y: box.y + box.length/2))
+        return boxPath
+    }
+
+    func getPointDrawPath(point: CGPoint) -> Path {
+        var squarePath = Path()
+        squarePath.move(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
+        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
+        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
+        squarePath.addLine(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
+        return squarePath
+    }
+}
+
 struct DemoMapView_Previews: PreviewProvider {
     static var previews: some View {
-        DemoMapView()
+        DemoMapView(demoMapData: DemoMapData())
     }
 }
