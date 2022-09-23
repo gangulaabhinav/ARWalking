@@ -351,7 +351,14 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     private fun updateDevicesDisplay() {
-        mConnectedDevicesView.setText("Connected Devices: ${devices.size}")
+        var deviceDisplayText: String = "Connected Devices: ${devices.size}\n"
+
+        deviceDisplayText += devices.map { (_, device) ->
+            "${device.deviceName}, location: {${device.x}; ${device.y}}, distance: ${device.distance}"
+        }
+        .joinToString("\n")
+
+        mConnectedDevicesView.setText(deviceDisplayText)
     }
 
     private fun updateLocationDisplay(location: RealVector?) {
