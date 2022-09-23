@@ -38,11 +38,9 @@ extension DemoBoothsBox {
 }
 
 struct DemoMapData {
-    // All dimensons in meters
-    static let SourcePoint = CGPoint(x: 435, y: 237)
-    static let DestinationPoint = CGPoint(x: 205, y: 352)
     static let SourceDestinationPathOffset = 10.0 // Path offset on borders
 
+    // All dimensons in meters
     let demoBoxesList = [
         DemoBoothsBox(x: 50.0 ),
         DemoBoothsBox(x: 90.0 ),
@@ -140,13 +138,6 @@ struct DemoMapData {
 }
 
 struct DemoMapView: View {
-    static let SourceDestinationPathLineWidth = 8.0
-    static let SourcePointColor: Color = .blue
-    static let DestinationPointColor: Color = .red
-    static let PointDrawSize = 12.0
-    static let SourceDestinationPathColor: Color = .blue
-
-
     static let CanvsBackground: Color = Color(.sRGB, red: 230/255, green: 240/255, blue: 1, opacity: 1.0)
     static let DemoBoothsColor: Color = .black
 
@@ -165,15 +156,8 @@ struct DemoMapView: View {
             for box in demoMapData.demoBoxesList {
                 context.fill(getDemoBoothsBoxDrawPath(box: box), with: .color(DemoMapView.DemoBoothsColor))
             }
-            context.fill(getPointDrawPath(point: DemoMapData.SourcePoint), with: .color(DemoMapView.SourcePointColor))
-            context.fill(getPointDrawPath(point: DemoMapData.DestinationPoint), with: .color(DemoMapView.DestinationPointColor))
-            context.stroke(demoMapData.getSourceToDestinationPath(source: DemoMapData.SourcePoint, destination: DemoMapData.DestinationPoint), with: .color(DemoMapView.SourceDestinationPathColor), lineWidth: DemoMapView.SourceDestinationPathLineWidth)
         }
         .edgesIgnoringSafeArea(.all)
-        Circle()
-            .strokeBorder(.gray, lineWidth: 4)
-            .background(Circle().fill(.blue))
-            .frame(width: 15, height: 15)
     }
     
     func getDemoBoothsBoxDrawPath(box: DemoBoothsBox) -> Path {
@@ -183,15 +167,6 @@ struct DemoMapView: View {
         boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y + box.length/2))
         boxPath.addLine(to: CGPoint(x: box.x - box.width/2, y: box.y + box.length/2))
         return boxPath
-    }
-
-    func getPointDrawPath(point: CGPoint) -> Path {
-        var squarePath = Path()
-        squarePath.move(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y - DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x + DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
-        squarePath.addLine(to: CGPoint(x: point.x - DemoMapView.PointDrawSize/2, y: point.y + DemoMapView.PointDrawSize/2))
-        return squarePath
     }
 }
 

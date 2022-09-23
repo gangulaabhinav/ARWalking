@@ -14,7 +14,10 @@ class FloorMapManager: IndoorMapManagerProtocol {
     }
 
     func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
-        Path()
+        var boxPath = Path()
+        boxPath.move(to: source)
+        boxPath.addLine(to: destination)
+        return boxPath
     }
 }
 
