@@ -39,13 +39,6 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         private const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
 
         private const val SERVICE_NAME = "General"
-
-        // Subscribing from Pixel 5a
-        private val deviceToLocation = hashMapOf<String, Location>(
-            "Pixel 3 XL" to Location(0.0, 0.0),
-            "Pixel 4a" to Location(6.0, 0.0),
-            "Pixel 3" to Location(6.0, 6.0),
-        )
     }
 
     private var mode = 0;
@@ -64,6 +57,8 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
     private var deviceName = "Device"
     private var enableRanging = false
+
+    private var deviceToLocation: HashMap<String, Location> = HashMap()
 
     // NanClientCallback
     override fun onAttachedFailed() {
@@ -329,7 +324,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         val optimum = solver.solve()
 
         // the answer
-        val centroid = optimum.point
+        val centroid = optimum.point.map { x -> x/1000.0 }
 
         bleIndicate(centroid.toArray().joinToString(","))
 
@@ -643,6 +638,20 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         mBleStatusView.text = displayText
     }
 
+    private fun createDeviceToLocationMap(): HashMap<String, Location> {
+        val result = HashMap<String, Location>()
+        for (i in 1..6) {
+            mPreferences.getString("peer${i}", null)?.let { deviceName ->
+                result[deviceName] = Location(
+                    (mPreferences.getString("peer${i}x", null)?.toDouble() ?: 0.0) * 1000,
+                    (mPreferences.getString("peer${i}y", null)?.toDouble() ?: 0.0) * 1000
+                )
+            }
+        }
+
+        return result
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -654,6 +663,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         findViewById<Button>(R.id.start).setOnClickListener {
             deviceName = mPreferences.getString("device_name", null) ?: "Device"
             enableRanging = mPreferences.getBoolean("enable_ranging", false)
+            deviceToLocation = createDeviceToLocationMap()
             bleStartAdvertising()
 
             if (mPreferences.getBoolean("publish", false)) {

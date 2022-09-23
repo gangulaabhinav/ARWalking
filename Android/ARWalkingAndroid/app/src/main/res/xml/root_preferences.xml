@@ -31,28 +31,115 @@
 
     </PreferenceCategory>
 
-<!--    <PreferenceCategory app:title="Publish Settings" app:dependency="publish">-->
-<!--        <EditTextPreference-->
-<!--            app:key="coordinateX"-->
-<!--            app:title="X Coordinate"-->
-<!--            app:defaultValue="0"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
+    <PreferenceCategory app:title="Configure Peers" app:dependency="enable_ranging">
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer1"
+            app:title="Device Name 1"
+            app:useSimpleSummaryProvider="true" />
 
-<!--        <EditTextPreference-->
-<!--            app:key="coordinateY"-->
-<!--            app:title="Y Coordinate"-->
-<!--            app:defaultValue="0"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer1x"
+            app:title="X Coordinate 1"
+            app:useSimpleSummaryProvider="true" />
 
-<!--        <EditTextPreference-->
-<!--            app:key="coordinateZ"-->
-<!--            app:title="Z Coordinate"-->
-<!--            app:defaultValue="0"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-<!--    </PreferenceCategory>-->
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer1y"
+            app:title="Y Coordinate 1"
+            app:useSimpleSummaryProvider="true" />
 
-<!--    <PreferenceCategory app:title="Subscribe Settings" app:dependency="subscribe">-->
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer2"
+            app:title="Device Name 2"
+            app:useSimpleSummaryProvider="true" />
 
-<!--    </PreferenceCategory>-->
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer2x"
+            app:title="X Coordinate 2"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer2y"
+            app:title="Y Coordinate 2"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer3"
+            app:title="Device Name 3"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer3x"
+            app:title="X Coordinate 3"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer3y"
+            app:title="Y Coordinate 3"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer4"
+            app:title="Device Name 4"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer4x"
+            app:title="X Coordinate 4"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer4y"
+            app:title="Y Coordinate 4"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer5"
+            app:title="Device Name 5"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer5x"
+            app:title="X Coordinate 5"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer5y"
+            app:title="Y Coordinate 5"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer6"
+            app:title="Device Name 6"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer6x"
+            app:title="X Coordinate 6"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dependency="enable_ranging"
+            app:key="peer6y"
+            app:title="Y Coordinate 6"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
 
 </PreferenceScreen>
