@@ -28,9 +28,11 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
         private const val SERVICE_NAME = "General"
 
+        // Subscribing from Pixel 5a
         private val deviceToLocation = hashMapOf<String, Location>(
-            "4a" to Location(0.0, 0.6),
-            "3a" to Location(6.0, 0.0),
+            "Pixel 3 XL" to Location(0.0, 0.0),
+            "Pixel 4a" to Location(6.0, 0.0),
+            "Pixel 3" to Location(6.0, 6.0),
         )
     }
 
