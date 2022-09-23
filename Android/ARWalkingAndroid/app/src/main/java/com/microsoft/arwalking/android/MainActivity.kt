@@ -9,21 +9,31 @@ import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.google.android.apps.location.rtt.nanrttlib.*
+import com.lemmingapex.trilateration.NonLinearLeastSquaresSolver
+import com.lemmingapex.trilateration.TrilaterationFunction
+import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer
+import org.apache.commons.math3.linear.RealVector
 import java.time.Duration
 import java.time.Instant
 
+data class Location(val x: Double, val y: Double);
 
 class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallback, NanSubscriberCallback, NanContinuousRangerCallback {
     companion object {
         private const val LOG_TAG = "ARWalkingRTTActivity"
 
         private const val SERVICE_NAME = "General"
+
+        private val deviceToLocation = hashMapOf<String, Location>(
+            "4a" to Location(0.0, 0.6),
+            "3a" to Location(6.0, 0.0),
+        )
     }
 
-    private var deviceName = "Device"
     private var mode = 0;
 
     private val mPreferences: SharedPreferences by lazy {
@@ -37,6 +47,9 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         NanContinuousRanger(this, 1000, Handler(mainLooper))
     }
     private val devices: HashMap<PeerHandle, NanDeviceModel> = HashMap()
+
+    private var deviceName = "Device"
+    private var enableRanging = false
 
     // NanClientCallback
     override fun onAttachedFailed() {
@@ -141,8 +154,8 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     override fun onSessionTerminated(i: Int, str: String?) {
-        nanRanger.stopRanging()
         devices.clear()
+        updateDevicesDisplay()
         showToast("Session Terminated")
     }
 
@@ -189,8 +202,8 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
                 ).compareTo(Message.TIMEOUT) > 0
         ) {
             showToast("Device removed: $peerHandle")
-            nanRanger.stopRanging()
             devices.remove(peerHandle)
+            updateDevicesDisplay()
             return false
         }
 
@@ -227,11 +240,18 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
     private fun handleNewDeviceIfNeeded(mode: Int, peerHandle: PeerHandle, deviceName: String) {
         if (!this.devices.containsKey(peerHandle)) {
-            val newDevice = NanDeviceModel(deviceName, peerHandle, SERVICE_NAME)
-            newDevice.setLastCheckIn(Instant.ofEpochMilli(SystemClock.elapsedRealtime()))
+            val newDevice = NanDeviceModel(deviceName, peerHandle, SERVICE_NAME).apply {
+                setLastCheckIn(Instant.ofEpochMilli(SystemClock.elapsedRealtime()))
 
-            showToast("Device Added: $peerHandle")
-            this.devices.put(peerHandle, newDevice)
+                deviceToLocation[deviceName]?.let { location ->
+                    x = location.x
+                    y = location.y
+                }
+            }
+
+            showToast("Device Added: $peerHandle, name: $deviceName")
+            devices.put(peerHandle, newDevice)
+            updateDevicesDisplay()
 
             when (mode) {
                 0 -> {
@@ -247,6 +267,10 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
     }
 
     override fun getPeerHandles(): List<PeerHandle> {
+        if (!enableRanging) {
+            return listOf()
+        }
+
         return devices.values.map {
             it.peerHandle
         }
@@ -262,8 +286,45 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
                 showToast("Ranging failed for peer: ${result.peerHandle}, status: ${result.status}")
             }
             else {
+                devices[result.peerHandle]?.distance = result.distanceMm
                 showToast("Distance from peer: ${result.peerHandle}, mm: ${result.distanceMm}, stdDevMm: ${result.distanceStdDevMm}, attempts: ${result.numAttemptedMeasurements}, successful attempts: ${result.numSuccessfulMeasurements}")
             }
+        }
+
+        computeLocation()
+    }
+
+    private fun computeLocation() {
+        val positionsWithDistances = devices.values
+
+        if (positionsWithDistances.size < 2) {
+            Log.i(LOG_TAG, "Not enough positions for computing location: ${positionsWithDistances.size} found")
+            return
+        }
+
+        val positions = positionsWithDistances.map {
+            doubleArrayOf(it.x, it.y)
+        }.toTypedArray()
+
+        val distances = positionsWithDistances.map {
+            it.distance.toDouble()
+        }.toDoubleArray()
+
+        val solver = NonLinearLeastSquaresSolver(TrilaterationFunction(positions, distances), LevenbergMarquardtOptimizer())
+        val optimum = solver.solve()
+
+        // the answer
+        val centroid = optimum.point
+        updateLocationDisplay(centroid)
+        Log.i(LOG_TAG, "Location computed: $centroid")
+        try {
+            // error and geometry information; may throw SingularMatrixException depending the threshold argument provided
+            val standardDeviation = optimum.getSigma(0.0)
+            val covarianceMatrix = optimum.getCovariances(0.0)
+            Log.i(LOG_TAG, "standardDeviation: $standardDeviation, covarianceMatrix: $covarianceMatrix")
+        }
+        catch (e: java.lang.Exception) {
+            Log.i(LOG_TAG, "Exception calculating stdDev or covariance: ${e.message}")
         }
     }
 
@@ -282,11 +343,32 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
         super.onResume()
     }
 
+    private val mConnectedDevicesView: TextView by lazy {
+        findViewById(R.id.connected_devices)
+    }
+    private val mLocationView: TextView by lazy {
+        findViewById(R.id.location)
+    }
+
+    private fun updateDevicesDisplay() {
+        mConnectedDevicesView.setText("Connected Devices: ${devices.size}")
+    }
+
+    private fun updateLocationDisplay(location: RealVector?) {
+        mLocationView.setText("Location: $location")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        updateDevicesDisplay()
+        updateLocationDisplay(null)
+
         findViewById<Button>(R.id.start).setOnClickListener {
+            deviceName = mPreferences.getString("device_name", null) ?: "Device"
+            enableRanging = mPreferences.getBoolean("enable_ranging", false)
+
             if (mPreferences.getBoolean("publish", false)) {
                 mode = 0
                 nanClient.publishService(SERVICE_NAME, this, null)

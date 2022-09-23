@@ -1,9 +1,23 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-        app:key="permissions"
-        app:title="Ensure Permissions"
-        />
+    <PreferenceCategory app:title="Settings">
+        <Preference
+            app:key="permissions"
+            app:title="Ensure Permissions"
+            />
+
+        <EditTextPreference
+            app:key="device_name"
+            app:title="Device Name"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="enable_ranging"
+            android:title="Enable Ranging in this device"
+            app:defaultValue="false"
+            />
+    </PreferenceCategory>
 
     <PreferenceCategory app:title="Mode">
 
@@ -17,28 +31,28 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Publish Settings" app:dependency="publish">
-        <EditTextPreference
-            app:key="coordinateX"
-            app:title="X Coordinate"
-            app:defaultValue="0"
-            app:useSimpleSummaryProvider="true" />
+<!--    <PreferenceCategory app:title="Publish Settings" app:dependency="publish">-->
+<!--        <EditTextPreference-->
+<!--            app:key="coordinateX"-->
+<!--            app:title="X Coordinate"-->
+<!--            app:defaultValue="0"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
-        <EditTextPreference
-            app:key="coordinateY"
-            app:title="Y Coordinate"
-            app:defaultValue="0"
-            app:useSimpleSummaryProvider="true" />
+<!--        <EditTextPreference-->
+<!--            app:key="coordinateY"-->
+<!--            app:title="Y Coordinate"-->
+<!--            app:defaultValue="0"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
-        <EditTextPreference
-            app:key="coordinateZ"
-            app:title="Z Coordinate"
-            app:defaultValue="0"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+<!--        <EditTextPreference-->
+<!--            app:key="coordinateZ"-->
+<!--            app:title="Z Coordinate"-->
+<!--            app:defaultValue="0"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--    </PreferenceCategory>-->
 
-    <PreferenceCategory app:title="Subscribe Settings" app:dependency="subscribe">
+<!--    <PreferenceCategory app:title="Subscribe Settings" app:dependency="subscribe">-->
 
-    </PreferenceCategory>
+<!--    </PreferenceCategory>-->
 
 </PreferenceScreen>

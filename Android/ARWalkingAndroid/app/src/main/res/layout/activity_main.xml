@@ -24,6 +24,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/info"
+        app:layout_constraintTop_toBottomOf="@+id/stop"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/connected_devices"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/location"
+            />
+
+    </LinearLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/settings_container"
         android:name="com.microsoft.arwalking.android.SettingsFragment"
@@ -32,6 +54,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stop" />
+        app:layout_constraintTop_toBottomOf="@+id/info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

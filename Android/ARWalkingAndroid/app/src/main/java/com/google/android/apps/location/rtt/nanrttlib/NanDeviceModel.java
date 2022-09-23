@@ -9,6 +9,10 @@ public class NanDeviceModel {
     public final PeerHandle peerHandle;
     public final String service;
 
+    public Double x = 0.0;
+    public Double y = 0.0;
+    public Integer distance = -1;
+
     public NanDeviceModel(String deviceName2, PeerHandle peerHandle2, String service2) {
         this.deviceName = deviceName2;
         this.peerHandle = peerHandle2;
