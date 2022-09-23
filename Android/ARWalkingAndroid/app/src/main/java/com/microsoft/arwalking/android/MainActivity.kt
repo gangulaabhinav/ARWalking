@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
         Handler(mainLooper).postDelayed({
             sendPingLoop(peerHandle)
-        }, 1000)
+        }, Message.PING_DELAY.toMillis())
     }
 
     private fun ensureDeviceAliveLoop(peerHandle: PeerHandle) {
@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity(), NanClientCallback, NanPublisherCallbac
 
         Handler(mainLooper).postDelayed({
             ensureDeviceAliveLoop(peerHandle)
-        }, 1000)
+        }, Message.PING_DELAY.toMillis())
     }
 
     private fun handleNewDeviceIfNeeded(mode: Int, peerHandle: PeerHandle, deviceName: String) {
