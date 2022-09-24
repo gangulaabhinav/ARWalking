@@ -18,7 +18,10 @@ class FloorMapManager: IndoorMapManagerProtocol {
     }
 
     func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> [CGPoint] {
-        return [source, destination]
+        return [CGPoint(x: 51.0, y: 48.0),
+                CGPoint(x: 51.0, y: 42.0),
+                CGPoint(x: 24.0, y: 42.0),
+                CGPoint(x: 24.0, y: 25.0)]
     }
 }
 

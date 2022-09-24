@@ -20,11 +20,11 @@ struct IndoorMapView: View {
     // All dimensons in meters
     static let LocationOffset = CGPoint(x: 25, y: 25) // What does 0,0 world location correspond to on the map
     static let CurrentLocation = CGPoint(x: 0, y: 0)
-    static let SourceLocation = CGPoint(x: 25, y: 25)
-    static let DestinationLocation = CGPoint(x: -9.5, y: 5.2)
+    static let SourceLocation = CGPoint(x: 25, y: 23)
+    static let DestinationLocation = CGPoint(x: -4.0, y: 0.0)
     static let ReferenceBoxSize = CGSize(width: 20.0, height: 20.0) // Rectangular to be drawn as reference on the map starting from (0,0) point
 
-    static let SourceDestinationPathLineWidth = 8.0
+    static let SourceDestinationPathLineWidth = 4.0
     static let SourcePointColor: Color = .blue
     static let DestinationPointColor: Color = .red
     static let PointDrawSize = 12.0
