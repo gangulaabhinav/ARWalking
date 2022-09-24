@@ -55,16 +55,20 @@ class NavigationManager: ObservableObject {
                     completedPoints[index] = true
                 }
             }
-            // Hack: Harcoding it for now, ned to calculate based on previous point and next point
             // If we are near a turn that hasn't been visited previously, announce it
             if proximityPointIndex != -1 {
                 var turnAnnouncement = "Turn now"
-                if proximityPointIndex == 1 {
-                    turnAnnouncement = "Turn left"
-                } else if proximityPointIndex == 2 {
-                    turnAnnouncement = "Turn right"
-                } else if proximityPointIndex == navigationPath.count - 1 { // last point == destination
+                if proximityPointIndex == navigationPath.count - 1 {
                     turnAnnouncement = "Reached destination"
+                } else {
+                    let arrivalVector = navigationPath[proximityPointIndex].getVector(from: navigationPath[proximityPointIndex - 1])
+                    let destinationVector = navigationPath[proximityPointIndex].getVector(to: navigationPath[proximityPointIndex + 1])
+                    let crossProduct = (arrivalVector.dx * destinationVector.dy) - (arrivalVector.dy * destinationVector.dx)
+                    if crossProduct < 0 { // If the cross product is -ve, anti-clockwise, means left turn
+                        turnAnnouncement = "Turn left"
+                    } else {
+                        turnAnnouncement = "Turn right"
+                    }
                 }
                 UIAccessibility.post(notification: .announcement, argument: turnAnnouncement)
             }

@@ -25,4 +25,12 @@ extension CGPoint {
         let yDist = y - self.y
         return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
+    
+    func getVector(from: CGPoint) -> CGVector { // get vector from the specified point to this point
+        return CGVector(dx: self.x - from.y, dy: self.y - from.y)
+    }
+
+    func getVector(to: CGPoint) -> CGVector { // get vector from the this point to the specified point
+        return CGVector(dx: to.y - self.x, dy: to.y - self.y)
+    }
 }
