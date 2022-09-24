@@ -13,10 +13,14 @@ class MLCPDemoMapManager: IndoorMapManagerProtocol {
     typealias V = DemoMapView
     let demoMapData = DemoMapData()
     func getMap() -> DemoMapView {
-        DemoMapView(demoMapData: demoMapData)
+        DemoMapView(demoMapData: demoMapData, viewScale: getMapScale())
     }
 
-    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
+    func getMapScale() -> CGFloat { // 1 meters to points on view
+        return 10.0
+    }
+
+    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> [CGPoint] {
         demoMapData.getSourceToDestinationPath(source: source, destination: destination)
     }
 }
@@ -31,30 +35,30 @@ struct DemoBoothsBox { // A row of booths for a demo booths box that can be draw
 extension DemoBoothsBox {
     init(x: CGFloat) {
         self.x = x
-        self.y = 300.0 // Assuming all boxes have same y center location
-        width = 20.0 // Width of a booth
-        length = 320.0 // Length of all booths combined in a row
+        self.y = 30.0 // Assuming all boxes have same y center location
+        width = 2.0 // Width of a booth
+        length = 32.0 // Length of all booths combined in a row
     }
 }
 
 struct DemoMapData {
-    static let SourceDestinationPathOffset = 10.0 // Path offset on borders
+    static let SourceDestinationPathOffset = 1.0 // Path offset on borders
 
     // All dimensons in meters
     let demoBoxesList = [
-        DemoBoothsBox(x: 50.0 ),
-        DemoBoothsBox(x: 90.0 ),
-        DemoBoothsBox(x: 130.0),
-        DemoBoothsBox(x: 170.0),
-        DemoBoothsBox(x: 210.0),
-        DemoBoothsBox(x: 250.0),
-        DemoBoothsBox(x: 290.0),
-        DemoBoothsBox(x: 330.0),
-        DemoBoothsBox(x: 370.0),
-        DemoBoothsBox(x: 410.0),
-        DemoBoothsBox(x: 450.0),
-        DemoBoothsBox(x: 490.0),
-        DemoBoothsBox(x: 530.0),
+        DemoBoothsBox(x:  5.0 ),
+        DemoBoothsBox(x:  9.0 ),
+        DemoBoothsBox(x: 13.0),
+        DemoBoothsBox(x: 17.0),
+        DemoBoothsBox(x: 21.0),
+        DemoBoothsBox(x: 25.0),
+        DemoBoothsBox(x: 29.0),
+        DemoBoothsBox(x: 33.0),
+        DemoBoothsBox(x: 37.0),
+        DemoBoothsBox(x: 41.0),
+        DemoBoothsBox(x: 45.0),
+        DemoBoothsBox(x: 49.0),
+        DemoBoothsBox(x: 53.0),
     ]
 
     func getBoxIndexToRightOfPoint(point : CGPoint) -> Int {
@@ -76,11 +80,11 @@ struct DemoMapData {
         return distance
     }
 
-    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
-        var path = Path()
+    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> [CGPoint] {
         let projectedSource = getProjectedPointInLaneCenter(point: source)
         let projectedDestination = getProjectedPointInLaneCenter(point: destination)
-        path.move(to: CGPoint(x: projectedSource.x, y: projectedSource.y)) // add projected source
+
+        var pathPoints = [projectedSource] // add projected source to the path list
 
         // Assuming there are only two turns needed
         let sourceRightBox = getBoxIndexToRightOfPoint(point: source)
@@ -108,16 +112,16 @@ struct DemoMapData {
             let bottomPathDistance = getPathDistance(point: projectedSource, point1: firstTurnPointBottom, point2: secondTurnPointBottom, point3: projectedDestination)
             
             if topPathDistance < bottomPathDistance {
-                path.addLine(to: firstTurnPointTop)
-                path.addLine(to: secondTurnPointTop)
+                pathPoints.append(firstTurnPointTop)
+                pathPoints.append(secondTurnPointTop)
             } else {
-                path.addLine(to: firstTurnPointBottom)
-                path.addLine(to: secondTurnPointBottom)
+                pathPoints.append(firstTurnPointBottom)
+                pathPoints.append(secondTurnPointBottom)
             }
         }
-        
-        path.addLine(to: CGPoint(x: projectedDestination.x, y: projectedDestination.y)) // add projected destianation
-        return path
+
+        pathPoints.append(projectedDestination)
+        return pathPoints
     }
 
     // Project a point to the center of lanes (walkways). Helpful is location has error and falls inside booths
@@ -142,9 +146,11 @@ struct DemoMapView: View {
     static let DemoBoothsColor: Color = .black
 
     let demoMapData: DemoMapData
+    let viewScale: CGFloat
 
-    init(demoMapData: DemoMapData) {
+    init(demoMapData: DemoMapData, viewScale: CGFloat) {
         self.demoMapData = demoMapData
+        self.viewScale = viewScale
     }
 
     var body: some View {
@@ -162,16 +168,16 @@ struct DemoMapView: View {
     
     func getDemoBoothsBoxDrawPath(box: DemoBoothsBox) -> Path {
         var boxPath = Path()
-        boxPath.move(to: CGPoint(x: box.x - box.width/2, y: box.y - box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y - box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y + box.length/2))
-        boxPath.addLine(to: CGPoint(x: box.x - box.width/2, y: box.y + box.length/2))
+        boxPath.move   (to: CGPoint(x: box.x - box.width/2, y: box.y - box.length/2)*viewScale)
+        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y - box.length/2)*viewScale)
+        boxPath.addLine(to: CGPoint(x: box.x + box.width/2, y: box.y + box.length/2)*viewScale)
+        boxPath.addLine(to: CGPoint(x: box.x - box.width/2, y: box.y + box.length/2)*viewScale)
         return boxPath
     }
 }
 
 struct DemoMapView_Previews: PreviewProvider {
     static var previews: some View {
-        DemoMapView(demoMapData: DemoMapData())
+        DemoMapView(demoMapData: DemoMapData(), viewScale: 10)
     }
 }

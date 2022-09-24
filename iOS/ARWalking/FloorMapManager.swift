@@ -13,11 +13,12 @@ class FloorMapManager: IndoorMapManagerProtocol {
         FloorMapView()
     }
 
-    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
-        var boxPath = Path()
-        boxPath.move(to: source)
-        boxPath.addLine(to: destination)
-        return boxPath
+    func getMapScale() -> CGFloat {
+        return 10.0
+    }
+
+    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> [CGPoint] {
+        return [source, destination]
     }
 }
 

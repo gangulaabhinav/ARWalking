@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9E6C2235288B35D00053E7AC /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9E6C2234288B35D00053E7AC /* sound.mp3 */; };
+		9E9F6FAB28DEE93900CE600A /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */; };
 		9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */; };
 		9EB84B2728DA38AE0003A3CF /* MLCPDemoMapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2628DA38AE0003A3CF /* MLCPDemoMapManager.swift */; };
 		9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */; };
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		9E6C2234288B35D00053E7AC /* sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sound.mp3; sourceTree = "<group>"; };
+		9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
 		9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorMapView.swift; sourceTree = "<group>"; };
 		9EB84B2628DA38AE0003A3CF /* MLCPDemoMapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLCPDemoMapManager.swift; sourceTree = "<group>"; };
 		9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneSurface.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				9ED031822885CCD000363986 /* ARWalkingZoneSurface.swift */,
 				9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */,
 				AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */,
+				9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */,
 				9ED2BFEC28DE4F4A008B5734 /* FloorMapManager.swift */,
 				9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */,
 				9EB84B2628DA38AE0003A3CF /* MLCPDemoMapManager.swift */,
@@ -291,6 +294,7 @@
 				ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */,
 				9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */,
 				ADCB0E1E2869C22700A0BF16 /* AppDelegate.swift in Sources */,
+				9E9F6FAB28DEE93900CE600A /* CGPoint+Extension.swift in Sources */,
 				9ED2BFED28DE4F4A008B5734 /* FloorMapManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
