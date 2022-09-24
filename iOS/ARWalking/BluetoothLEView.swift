@@ -9,11 +9,12 @@ import SwiftUI
 import CoreBluetooth
 
 struct BluetoothLEView: View {
-    let bluetoothLEListener = BluetoothLEListener()
     @ObservedObject var bleManager: BluetoothLEManager
+    @ObservedObject var currentLocationData: CurrentLocationData
 
-    init() {
-        bleManager = BluetoothLEManager(bluetoothLEDelegate: bluetoothLEListener)
+    init(currentLocationData: CurrentLocationData) {
+        self.currentLocationData = currentLocationData
+        self.bleManager = BluetoothLEManager(currentLocationData: currentLocationData)
     }
 
     var body: some View {
@@ -23,7 +24,7 @@ struct BluetoothLEView: View {
                 Text(bleManager.bleStatus)
                 Divider()
                     .frame(height: 20)
-                Text("x: " + String(format: "%.1f", bleManager.x) + ", y: " + String(format: "%.1f", bleManager.y))
+                Text("x: " + String(format: "%.1f", currentLocationData.x) + ", y: " + String(format: "%.1f", currentLocationData.y))
             }
         }
     }
@@ -31,17 +32,7 @@ struct BluetoothLEView: View {
 
 struct BluetoothLEView_Previews: PreviewProvider {
     static var previews: some View {
-        BluetoothLEView()
-    }
-}
-
-protocol BluetoothLEDelegate {
-    func didUpdateLocation(x: CGFloat, y: CGFloat)
-}
-
-class BluetoothLEListener: BluetoothLEDelegate {
-    func didUpdateLocation(x: CGFloat, y: CGFloat) {
-        return
+        BluetoothLEView(currentLocationData: CurrentLocationData())
     }
 }
 
@@ -57,12 +48,10 @@ class BluetoothLEManager: NSObject, ObservableObject {
     var bleCentral: CBCentralManager!
     var connectedPeripheral: CBPeripheral?
 
-    let bluetoothLEDelegate: BluetoothLEDelegate
-    
+    var currentLocationData: CurrentLocationData
+
     @Published var logText = "Sample small text"
     @Published var bleStatus = "Unknown"
-    @Published var x: CGFloat = 0.0
-    @Published var y: CGFloat = 0.0
 
     enum BLELifecycleState: String {
         case bluetoothNotReady
@@ -80,9 +69,8 @@ class BluetoothLEManager: NSObject, ObservableObject {
         }
     }
 
-    init(bluetoothLEDelegate: BluetoothLEDelegate) {
-        // using DispatchQueue.main means we can update UI directly from delegate methods
-        self.bluetoothLEDelegate = bluetoothLEDelegate
+    init(currentLocationData: CurrentLocationData) {
+        self.currentLocationData = currentLocationData
         super.init()
         bleCentral = CBCentralManager(delegate: self, queue: DispatchQueue.main)
     }
@@ -259,10 +247,9 @@ extension BluetoothLEManager: CBPeripheralDelegate {
         let stringValue = String(data: data, encoding: .utf8) ?? ""
         let distancesArr = stringValue.components(separatedBy: ",")
         if (characteristic.uuid == uuidCharForRead || characteristic.uuid == uuidCharForIndicate) && distancesArr.count == 2 {
-            x = CGFloat(Float(distancesArr[0]) ?? 0.0)
-            y = CGFloat(Float(distancesArr[1]) ?? 0.0)
+            currentLocationData.x = CGFloat(Float(distancesArr[0]) ?? 0.0)
+            currentLocationData.y = CGFloat(Float(distancesArr[1]) ?? 0.0)
         }
-        bluetoothLEDelegate.didUpdateLocation(x: x, y: y)
         appendLog("didUpdateValue '\(stringValue)'")
     }
 

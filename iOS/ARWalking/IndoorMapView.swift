@@ -18,7 +18,7 @@ protocol IndoorMapManagerProtocol {
 
 struct IndoorMapView: View {
     // All dimensons in meters
-    static let CurrentLocation = CGPoint(x: 0, y: 0)
+    //static let CurrentLocation = CGPoint(x: 0, y: 0)
     static let SourceLocation = CGPoint(x: 25, y: 23)
     static let DestinationLocation = CGPoint(x: -4.0, y: 0.0)
 
@@ -31,12 +31,18 @@ struct IndoorMapView: View {
     let indoorMapManager = FloorMapManager()
     //let indoorMapManager = MLCPDemoMapManager()
 
+    @ObservedObject var currentLocationData: CurrentLocationData
+
     @State var showSettings = false
     @State private var locationOffsetX = 25.0
     @State private var locationOffsetY = 25.0
     @State private var referenceBoxSizeX = 20.0
     @State private var referenceBoxSizeY = 20.0
     @State private var overrideMapScale = 10.0
+
+    init(currentLocationData: CurrentLocationData) {
+        self.currentLocationData = currentLocationData
+    }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -72,7 +78,7 @@ struct IndoorMapView: View {
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))
                 .frame(width: 15, height: 15)
-                .position((IndoorMapView.CurrentLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale())
+                .position((CGPoint(x: currentLocationData.x, y: currentLocationData.y) + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale())
         }
     }
 
@@ -117,6 +123,6 @@ struct IndoorMapView: View {
 
 struct IndoorMapView_Previews: PreviewProvider {
     static var previews: some View {
-        IndoorMapView()
+        IndoorMapView(currentLocationData: CurrentLocationData())
     }
 }

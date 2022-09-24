@@ -10,11 +10,13 @@ import RealityKit
 import SwiftUI
 
 struct ARWalkingView : View {
+    var currentLocationData = CurrentLocationData()
+
     @ViewBuilder
     private func getView() -> some View {
         VStack(spacing: 0) {
-            BluetoothLEView()
-            IndoorMapView()
+            BluetoothLEView(currentLocationData: currentLocationData)
+            IndoorMapView(currentLocationData: currentLocationData)
                 .frame(maxWidth: .infinity)
         }
             .frame(maxWidth: .infinity)
@@ -36,6 +38,11 @@ struct ARWalkingView : View {
             }
         }
     }
+}
+
+class CurrentLocationData: ObservableObject {
+    @Published var x: CGFloat = 0.0
+    @Published var y: CGFloat = 0.0
 }
 
 struct ARViewContainer: UIViewRepresentable {
