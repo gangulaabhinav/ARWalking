@@ -18,9 +18,11 @@ protocol IndoorMapManagerProtocol {
 
 struct IndoorMapView: View {
     // All dimensons in meters
-    static let CurrentLocation = CGPoint(x: 30, y: 25)
-    static let SourcePoint = CGPoint(x: 43.5, y: 23.7)
-    static let DestinationPoint = CGPoint(x: 20.5, y: 35.2)
+    static let LocationOffset = CGPoint(x: 25, y: 25) // What does 0,0 world location correspond to on the map
+    static let CurrentLocation = CGPoint(x: 0, y: 0)
+    static let SourceLocation = CGPoint(x: 25, y: 25)
+    static let DestinationLocation = CGPoint(x: -9.5, y: 5.2)
+    static let ReferenceBoxSize = CGSize(width: 20.0, height: 20.0) // Rectangular to be drawn as reference on the map starting from (0,0) point
 
     static let SourceDestinationPathLineWidth = 8.0
     static let SourcePointColor: Color = .blue
@@ -31,15 +33,15 @@ struct IndoorMapView: View {
     let indoorMapManager = FloorMapManager()
     //let indoorMapManager = MLCPDemoMapManager()
 
-    @State var showSettings = true
+    @State var showSettings = false
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             indoorMapManager.getMap()
             Canvas { context, size in
-                context.fill(getPointDrawPath(point: IndoorMapView.SourcePoint*indoorMapManager.getMapScale()), with: .color(IndoorMapView.SourcePointColor))
-                context.fill(getPointDrawPath(point: IndoorMapView.DestinationPoint*indoorMapManager.getMapScale()), with: .color(IndoorMapView.DestinationPointColor))
-                context.stroke(getSourceToDestinationPath(source: IndoorMapView.SourcePoint, destination: IndoorMapView.DestinationPoint), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
+                context.fill(getPointDrawPath(point: (IndoorMapView.SourceLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale()), with: .color(IndoorMapView.SourcePointColor))
+                context.fill(getPointDrawPath(point: (IndoorMapView.DestinationLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale()), with: .color(IndoorMapView.DestinationPointColor))
+                context.stroke(getSourceToDestinationPath(), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
             }
             .edgesIgnoringSafeArea(.all)
             Toggle("", isOn: $showSettings)
@@ -47,13 +49,14 @@ struct IndoorMapView: View {
             if showSettings {
                 Rectangle()
                     .stroke(Color.red, lineWidth: 4)
-                    .frame(width: 200, height: 200)
+                    .frame(width: IndoorMapView.ReferenceBoxSize.width*indoorMapManager.getMapScale(), height: IndoorMapView.ReferenceBoxSize.height*indoorMapManager.getMapScale())
+                    .position(IndoorMapView.LocationOffset*indoorMapManager.getMapScale() + CGPoint(x: 0.5*IndoorMapView.ReferenceBoxSize.width*indoorMapManager.getMapScale(), y: 0.5*IndoorMapView.ReferenceBoxSize.height*indoorMapManager.getMapScale()))
             }
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))
                 .frame(width: 15, height: 15)
-                .position(x: IndoorMapView.CurrentLocation.x*indoorMapManager.getMapScale(), y: IndoorMapView.CurrentLocation.y*indoorMapManager.getMapScale())
+                .position((IndoorMapView.CurrentLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale())
         }
     }
 
@@ -66,8 +69,10 @@ struct IndoorMapView: View {
         return squarePath
     }
 
-    func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> Path {
-        let pathPoints = indoorMapManager.getSourceToDestinationPath(source: IndoorMapView.SourcePoint, destination: IndoorMapView.DestinationPoint)
+    func getSourceToDestinationPath() -> Path {
+        let source = IndoorMapView.SourceLocation + IndoorMapView.LocationOffset
+        let destination = IndoorMapView.DestinationLocation + IndoorMapView.LocationOffset
+        let pathPoints = indoorMapManager.getSourceToDestinationPath(source: source, destination: destination)
 
         var path = Path()
         if pathPoints.count < 2 {
