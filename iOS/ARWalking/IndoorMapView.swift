@@ -18,11 +18,9 @@ protocol IndoorMapManagerProtocol {
 
 struct IndoorMapView: View {
     // All dimensons in meters
-    static let LocationOffset = CGPoint(x: 25, y: 25) // What does 0,0 world location correspond to on the map
     static let CurrentLocation = CGPoint(x: 0, y: 0)
     static let SourceLocation = CGPoint(x: 25, y: 23)
     static let DestinationLocation = CGPoint(x: -4.0, y: 0.0)
-    static let ReferenceBoxSize = CGSize(width: 20.0, height: 20.0) // Rectangular to be drawn as reference on the map starting from (0,0) point
 
     static let SourceDestinationPathLineWidth = 4.0
     static let SourcePointColor: Color = .blue
@@ -34,29 +32,55 @@ struct IndoorMapView: View {
     //let indoorMapManager = MLCPDemoMapManager()
 
     @State var showSettings = false
+    @State private var locationOffsetX = 25.0
+    @State private var locationOffsetY = 25.0
+    @State private var referenceBoxSizeX = 20.0
+    @State private var referenceBoxSizeY = 20.0
+    @State private var overrideMapScale = 10.0
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             indoorMapManager.getMap()
             Canvas { context, size in
-                context.fill(getPointDrawPath(point: (IndoorMapView.SourceLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale()), with: .color(IndoorMapView.SourcePointColor))
-                context.fill(getPointDrawPath(point: (IndoorMapView.DestinationLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale()), with: .color(IndoorMapView.DestinationPointColor))
+                context.fill(getPointDrawPath(point: (IndoorMapView.SourceLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.SourcePointColor))
+                context.fill(getPointDrawPath(point: (IndoorMapView.DestinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.DestinationPointColor))
                 context.stroke(getSourceToDestinationPath(), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
             }
             .edgesIgnoringSafeArea(.all)
-            Toggle("", isOn: $showSettings)
-                .labelsHidden()
+
+            VStack (alignment: .leading) {
+                Toggle("", isOn: $showSettings)
+                    .labelsHidden()
+                if showSettings {
+                    Stepper("locationOffsetX: " + String(format: "%.1f", locationOffsetX), value: $locationOffsetX, step: 0.1)
+                    Stepper("locationOffsetY: " + String(format: "%.1f", locationOffsetY), value: $locationOffsetY, step: 0.1)
+                    Stepper("referenceBoxSizeX: " + String(format: "%.1f", referenceBoxSizeX), value: $referenceBoxSizeX, step: 0.1)
+                    Stepper("referenceBoxSizeY: " + String(format: "%.1f", referenceBoxSizeY), value: $referenceBoxSizeY, step: 0.1)
+                    Stepper("overrideMapScale: " + String(format: "%.1f", overrideMapScale), value: $overrideMapScale, step: 0.1)
+                }
+            }
+            .scaledToFit()
+            .foregroundColor(.red)
+
             if showSettings {
                 Rectangle()
                     .stroke(Color.red, lineWidth: 4)
-                    .frame(width: IndoorMapView.ReferenceBoxSize.width*indoorMapManager.getMapScale(), height: IndoorMapView.ReferenceBoxSize.height*indoorMapManager.getMapScale())
-                    .position(IndoorMapView.LocationOffset*indoorMapManager.getMapScale() + CGPoint(x: 0.5*IndoorMapView.ReferenceBoxSize.width*indoorMapManager.getMapScale(), y: 0.5*IndoorMapView.ReferenceBoxSize.height*indoorMapManager.getMapScale()))
+                    .frame(width: referenceBoxSizeX * getScale(), height: referenceBoxSizeY * getScale())
+                    .position(CGPoint(x: locationOffsetX, y: locationOffsetY) * getScale() + CGPoint(x: 0.5*referenceBoxSizeX * getScale(), y: 0.5*referenceBoxSizeY * getScale()))
             }
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))
                 .frame(width: 15, height: 15)
-                .position((IndoorMapView.CurrentLocation + IndoorMapView.LocationOffset)*indoorMapManager.getMapScale())
+                .position((IndoorMapView.CurrentLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale())
+        }
+    }
+
+    func getScale() -> CGFloat {
+        if showSettings {
+            return overrideMapScale
+        } else {
+            return indoorMapManager.getMapScale()
         }
     }
 
@@ -70,20 +94,20 @@ struct IndoorMapView: View {
     }
 
     func getSourceToDestinationPath() -> Path {
-        let source = IndoorMapView.SourceLocation + IndoorMapView.LocationOffset
-        let destination = IndoorMapView.DestinationLocation + IndoorMapView.LocationOffset
+        let source = IndoorMapView.SourceLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)
+        let destination = IndoorMapView.DestinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)
         let pathPoints = indoorMapManager.getSourceToDestinationPath(source: source, destination: destination)
 
         var path = Path()
         if pathPoints.count < 2 {
-            path.move   (to: source*indoorMapManager.getMapScale())
-            path.addLine(to: destination*indoorMapManager.getMapScale())
+            path.move   (to: source * getScale())
+            path.addLine(to: destination * getScale())
         } else {
             for (index, point) in pathPoints.enumerated() {
                 if index == 0 {
-                    path.move   (to: pathPoints[0]*indoorMapManager.getMapScale())
+                    path.move   (to: pathPoints[0] * getScale())
                 } else {
-                    path.addLine(to: point*indoorMapManager.getMapScale())
+                    path.addLine(to: point * getScale())
                 }
             }
         }
