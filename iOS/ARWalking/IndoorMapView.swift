@@ -18,6 +18,7 @@ protocol IndoorMapManagerProtocol {
 
 struct IndoorMapView: View {
     // All dimensons in meters
+    static let CurrentLocation = CGPoint(x: 30, y: 25)
     static let SourcePoint = CGPoint(x: 43.5, y: 23.7)
     static let DestinationPoint = CGPoint(x: 20.5, y: 35.2)
 
@@ -30,8 +31,10 @@ struct IndoorMapView: View {
     let indoorMapManager = FloorMapManager()
     //let indoorMapManager = MLCPDemoMapManager()
 
+    @State var showSettings = true
+
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             indoorMapManager.getMap()
             Canvas { context, size in
                 context.fill(getPointDrawPath(point: IndoorMapView.SourcePoint*indoorMapManager.getMapScale()), with: .color(IndoorMapView.SourcePointColor))
@@ -39,11 +42,18 @@ struct IndoorMapView: View {
                 context.stroke(getSourceToDestinationPath(source: IndoorMapView.SourcePoint, destination: IndoorMapView.DestinationPoint), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
             }
             .edgesIgnoringSafeArea(.all)
+            Toggle("", isOn: $showSettings)
+                .labelsHidden()
+            if showSettings {
+                Rectangle()
+                    .stroke(Color.red, lineWidth: 4)
+                    .frame(width: 200, height: 200)
+            }
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))
                 .frame(width: 15, height: 15)
-            
+                .position(x: IndoorMapView.CurrentLocation.x*indoorMapManager.getMapScale(), y: IndoorMapView.CurrentLocation.y*indoorMapManager.getMapScale())
         }
     }
 
