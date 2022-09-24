@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E0A9EDB28DF513800D2A4C3 /* DestinationSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0A9EDA28DF513800D2A4C3 /* DestinationSelectionView.swift */; };
+		9E0A9EDD28DF51FD00D2A4C3 /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0A9EDC28DF51FD00D2A4C3 /* NavigationManager.swift */; };
 		9E6C2235288B35D00053E7AC /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9E6C2234288B35D00053E7AC /* sound.mp3 */; };
 		9E9F6FAB28DEE93900CE600A /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */; };
 		9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */; };
@@ -43,6 +45,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9E0A9EDA28DF513800D2A4C3 /* DestinationSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationSelectionView.swift; sourceTree = "<group>"; };
+		9E0A9EDC28DF51FD00D2A4C3 /* NavigationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
 		9E6C2234288B35D00053E7AC /* sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sound.mp3; sourceTree = "<group>"; };
 		9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
 		9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorMapView.swift; sourceTree = "<group>"; };
@@ -121,9 +125,11 @@
 				9ED031842885CCEC00363986 /* ARWalkingZoneRay.swift */,
 				AD441FFD28D846D700F517B7 /* BluetoothLEView.swift */,
 				9E9F6FAA28DEE93900CE600A /* CGPoint+Extension.swift */,
+				9E0A9EDA28DF513800D2A4C3 /* DestinationSelectionView.swift */,
 				9ED2BFEC28DE4F4A008B5734 /* FloorMapManager.swift */,
 				9EB84B2428D8DBB30003A3CF /* IndoorMapView.swift */,
 				9EB84B2628DA38AE0003A3CF /* MLCPDemoMapManager.swift */,
+				9E0A9EDC28DF51FD00D2A4C3 /* NavigationManager.swift */,
 				ADCB0E232869C22800A0BF16 /* Assets.xcassets */,
 				ADCB0E252869C22800A0BF16 /* Preview Content */,
 			);
@@ -290,6 +296,8 @@
 				9ED031852885CCEC00363986 /* ARWalkingZoneRay.swift in Sources */,
 				9EB84B2728DA38AE0003A3CF /* MLCPDemoMapManager.swift in Sources */,
 				AD441FFE28D846D700F517B7 /* BluetoothLEView.swift in Sources */,
+				9E0A9EDB28DF513800D2A4C3 /* DestinationSelectionView.swift in Sources */,
+				9E0A9EDD28DF51FD00D2A4C3 /* NavigationManager.swift in Sources */,
 				9EB84B2528D8DBB40003A3CF /* IndoorMapView.swift in Sources */,
 				ADCB0E202869C22700A0BF16 /* ARWalkingView.swift in Sources */,
 				9ED031832885CCD000363986 /* ARWalkingZoneSurface.swift in Sources */,

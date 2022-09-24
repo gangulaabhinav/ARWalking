@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ARWalkingView : View {
     var currentLocationData = CurrentLocationData()
+    @ObservedObject var navigationManager = NavigationManager()
 
     @ViewBuilder
     private func getView() -> some View {
@@ -20,9 +21,15 @@ struct ARWalkingView : View {
                 .frame(maxWidth: .infinity)
         }
             .frame(maxWidth: .infinity)
-        ARViewContainer()
-            .edgesIgnoringSafeArea(.all)
-            .frame(maxWidth: .infinity)
+        if navigationManager.isNavigating {
+            ARViewContainer()
+                .edgesIgnoringSafeArea(.all)
+                .frame(maxWidth: .infinity)
+        } else {
+            DestinationSelectionView(navigationManager: navigationManager)
+                .edgesIgnoringSafeArea(.all)
+                .frame(maxWidth: .infinity)
+        }
     }
     
     var body: some View {
