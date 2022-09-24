@@ -17,11 +17,8 @@ protocol IndoorMapManagerProtocol {
 }
 
 struct IndoorMapView: View {
-    // All dimensons in meters
-    //static let CurrentLocation = CGPoint(x: 0, y: 0)
     static let SourceLocation = CGPoint(x: 25, y: 23)
-    static let DestinationLocation = CGPoint(x: -4.0, y: 0.0)
-
+    // All dimensons in meters
     static let SourceDestinationPathLineWidth = 4.0
     static let SourcePointColor: Color = .blue
     static let DestinationPointColor: Color = .red
@@ -31,6 +28,7 @@ struct IndoorMapView: View {
     let indoorMapManager = FloorMapManager()
     //let indoorMapManager = MLCPDemoMapManager()
 
+    @ObservedObject var navigationManager: NavigationManager
     @ObservedObject var currentLocationData: CurrentLocationData
 
     @State var showSettings = false
@@ -40,19 +38,22 @@ struct IndoorMapView: View {
     @State private var referenceBoxSizeY = 20.0
     @State private var overrideMapScale = 10.0
 
-    init(currentLocationData: CurrentLocationData) {
+    init(currentLocationData: CurrentLocationData, navigationManager: NavigationManager) {
         self.currentLocationData = currentLocationData
+        self.navigationManager = navigationManager
     }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             indoorMapManager.getMap()
-            Canvas { context, size in
-                context.fill(getPointDrawPath(point: (IndoorMapView.SourceLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.SourcePointColor))
-                context.fill(getPointDrawPath(point: (IndoorMapView.DestinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.DestinationPointColor))
-                context.stroke(getSourceToDestinationPath(), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
+            if navigationManager.isNavigating {
+                Canvas { context, size in
+                    context.fill(getPointDrawPath(point: (navigationManager.sourceLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.SourcePointColor))
+                    context.fill(getPointDrawPath(point: (navigationManager.destinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale()), with: .color(IndoorMapView.DestinationPointColor))
+                    context.stroke(getSourceToDestinationPath(), with: .color(IndoorMapView.SourceDestinationPathColor), lineWidth: IndoorMapView.SourceDestinationPathLineWidth)
+                }
+                .edgesIgnoringSafeArea(.all)
             }
-            .edgesIgnoringSafeArea(.all)
 
             VStack (alignment: .leading) {
                 Toggle("", isOn: $showSettings)
@@ -100,9 +101,16 @@ struct IndoorMapView: View {
     }
 
     func getSourceToDestinationPath() -> Path {
-        let source = IndoorMapView.SourceLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)
-        let destination = IndoorMapView.DestinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)
+        let source = CGPoint(x: currentLocationData.x, y: currentLocationData.y) + CGPoint(x: locationOffsetX, y: locationOffsetY)
+        let destination = navigationManager.destinationLocation + CGPoint(x: locationOffsetX, y: locationOffsetY)
+
         let pathPoints = indoorMapManager.getSourceToDestinationPath(source: source, destination: destination)
+        // Convert to location coordinates from MapCoordinates to Location coordinatesa and update navigationManager
+        var locationPathPoints: [CGPoint] = []
+        for point in pathPoints {
+            locationPathPoints.append(point - CGPoint(x: locationOffsetX, y: locationOffsetY))
+        }
+        navigationManager.setNavigationPath(navigationPath: locationPathPoints)
 
         var path = Path()
         if pathPoints.count < 2 {
@@ -123,6 +131,6 @@ struct IndoorMapView: View {
 
 struct IndoorMapView_Previews: PreviewProvider {
     static var previews: some View {
-        IndoorMapView(currentLocationData: CurrentLocationData())
+        IndoorMapView(currentLocationData: CurrentLocationData(navigationManager: NavigationManager()), navigationManager: NavigationManager())
     }
 }

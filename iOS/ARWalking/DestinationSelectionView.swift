@@ -9,8 +9,10 @@ import SwiftUI
 
 struct DestinationSelectionView: View {
     var navigationManager: NavigationManager
+    var currentLocationData: CurrentLocationData
 
-    init(navigationManager: NavigationManager) {
+    init(currentLocationData: CurrentLocationData, navigationManager: NavigationManager) {
+        self.currentLocationData = currentLocationData
         self.navigationManager = navigationManager
     }
 
@@ -19,7 +21,7 @@ struct DestinationSelectionView: View {
             Text("Select a destination")
                 .font(.largeTitle)
             Button("Conference Room 006") {
-                navigationManager.startNavigation()
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: -4.0, y: 0.0))
             }
             Button("Conference Room 055") {}
             Button("Conference Room 143") {}
@@ -30,6 +32,6 @@ struct DestinationSelectionView: View {
 
 struct DestinationSelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        DestinationSelectionView(navigationManager: NavigationManager())
+        DestinationSelectionView(currentLocationData: CurrentLocationData(navigationManager: NavigationManager()), navigationManager: NavigationManager())
     }
 }

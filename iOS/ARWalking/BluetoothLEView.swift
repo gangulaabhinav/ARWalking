@@ -32,7 +32,7 @@ struct BluetoothLEView: View {
 
 struct BluetoothLEView_Previews: PreviewProvider {
     static var previews: some View {
-        BluetoothLEView(currentLocationData: CurrentLocationData())
+        BluetoothLEView(currentLocationData: CurrentLocationData(navigationManager: NavigationManager()))
     }
 }
 
@@ -249,6 +249,7 @@ extension BluetoothLEManager: CBPeripheralDelegate {
         if (characteristic.uuid == uuidCharForRead || characteristic.uuid == uuidCharForIndicate) && distancesArr.count == 2 {
             currentLocationData.x = CGFloat(Float(distancesArr[0]) ?? 0.0)
             currentLocationData.y = CGFloat(Float(distancesArr[1]) ?? 0.0)
+            currentLocationData.onLocationUpdated()
         }
         appendLog("didUpdateValue '\(stringValue)'")
     }

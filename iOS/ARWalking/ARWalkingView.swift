@@ -10,14 +10,20 @@ import RealityKit
 import SwiftUI
 
 struct ARWalkingView : View {
-    var currentLocationData = CurrentLocationData()
-    @ObservedObject var navigationManager = NavigationManager()
+    var currentLocationData: CurrentLocationData
+    @ObservedObject var navigationManager: NavigationManager
+
+    init() {
+        let navManager = NavigationManager()
+        self.navigationManager = navManager
+        self.currentLocationData = CurrentLocationData(navigationManager: navManager)
+    }
 
     @ViewBuilder
     private func getView() -> some View {
         VStack(spacing: 0) {
             BluetoothLEView(currentLocationData: currentLocationData)
-            IndoorMapView(currentLocationData: currentLocationData)
+            IndoorMapView(currentLocationData: currentLocationData, navigationManager: navigationManager)
                 .frame(maxWidth: .infinity)
         }
             .frame(maxWidth: .infinity)
@@ -26,7 +32,7 @@ struct ARWalkingView : View {
                 .edgesIgnoringSafeArea(.all)
                 .frame(maxWidth: .infinity)
         } else {
-            DestinationSelectionView(navigationManager: navigationManager)
+            DestinationSelectionView(currentLocationData: currentLocationData, navigationManager: navigationManager)
                 .edgesIgnoringSafeArea(.all)
                 .frame(maxWidth: .infinity)
         }
@@ -48,8 +54,18 @@ struct ARWalkingView : View {
 }
 
 class CurrentLocationData: ObservableObject {
-    @Published var x: CGFloat = 0.0
-    @Published var y: CGFloat = 0.0
+    @Published var x: CGFloat = 25.0
+    @Published var y: CGFloat = 23.0
+    
+    var navigationManager: NavigationManager
+
+    init(navigationManager: NavigationManager) {
+        self.navigationManager = navigationManager
+    }
+    
+    func onLocationUpdated() {
+        navigationManager.onLocationUpdated(x: x, y: y)
+    }
 }
 
 struct ARViewContainer: UIViewRepresentable {

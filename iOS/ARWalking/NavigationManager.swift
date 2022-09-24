@@ -6,11 +6,26 @@
 //
 
 import Foundation
+import CoreGraphics
 
 class NavigationManager: ObservableObject {
     @Published var isNavigating = false
-    
-    func startNavigation() {
+    var sourceLocation = CGPoint()
+    var destinationLocation = CGPoint()
+
+    var navigationPath: [CGPoint] = []
+
+    func startNavigation(from: CGPoint, to: CGPoint) {
+        sourceLocation = from
+        destinationLocation = to
         isNavigating = true
+    }
+
+    func setNavigationPath(navigationPath: [CGPoint]) {
+        self.navigationPath = navigationPath
+    }
+
+    func onLocationUpdated(x: CGFloat, y: CGFloat) {
+        return
     }
 }
