@@ -27,6 +27,7 @@ struct ARWalkingView : View {
                 .frame(maxWidth: .infinity)
         }
             .frame(maxWidth: .infinity)
+            .accessibilityElement(children: .ignore)
         if navigationManager.isNavigating {
             ARViewContainer()
                 .edgesIgnoringSafeArea(.all)
