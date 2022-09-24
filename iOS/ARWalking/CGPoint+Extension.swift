@@ -19,4 +19,10 @@ extension CGPoint {
     static func *(lhs: CGPoint, rhs: CGFloat) -> CGPoint {
         return CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
     }
+
+    func distance(x: CGFloat, y: CGFloat) -> CGFloat {
+        let xDist = x - self.x
+        let yDist = y - self.y
+        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
+    }
 }
