@@ -10,9 +10,9 @@ import CoreGraphics
 import UIKit
 
 class NavigationManager: ObservableObject {
-    static let ProximityForTurn = 1.0 // meters
-
+    @Published var proximityForTurn = 1.0 // meters
     @Published var isNavigating = false
+
     var sourceLocation = CGPoint()
     var destinationLocation = CGPoint()
 
@@ -50,7 +50,7 @@ class NavigationManager: ObservableObject {
         if isNavigating {
             for (index, point) in navigationPath.enumerated() {
                 let distance = point.distance(x: x, y: y)
-                if (distance < NavigationManager.ProximityForTurn) && completedPoints[index] == false {
+                if (distance < proximityForTurn) && completedPoints[index] == false {
                     proximityPointIndex = index
                     completedPoints[index] = true
                 }

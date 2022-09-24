@@ -64,6 +64,7 @@ struct IndoorMapView: View {
                     Stepper("referenceBoxSizeX: " + String(format: "%.1f", referenceBoxSizeX), value: $referenceBoxSizeX, step: 0.1)
                     Stepper("referenceBoxSizeY: " + String(format: "%.1f", referenceBoxSizeY), value: $referenceBoxSizeY, step: 0.1)
                     Stepper("overrideMapScale: " + String(format: "%.1f", overrideMapScale), value: $overrideMapScale, step: 0.1)
+                    Stepper("proximityForTurn: " + String(format: "%.1f", navigationManager.proximityForTurn), value: $navigationManager.proximityForTurn, step: 0.1)
                 }
             }
             .scaledToFit()
