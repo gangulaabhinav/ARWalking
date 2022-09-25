@@ -36,6 +36,7 @@ struct ARWalkingView : View {
             DestinationSelectionView(currentLocationData: currentLocationData, navigationManager: navigationManager)
                 .edgesIgnoringSafeArea(.all)
                 .frame(maxWidth: .infinity)
+                .background(Color(UIColor.lightGray).opacity(0.5))
         }
     }
     

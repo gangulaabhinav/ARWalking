@@ -18,14 +18,16 @@ struct DestinationSelectionView: View {
 
     var body: some View {
         VStack {
+            Spacer()
             Text("Select a destination")
                 .font(.largeTitle)
             Button("Conference Room 006") {
-                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: -4.0, y: 0.0))
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 15.5, y: 17.0))
             }
             Button("Conference Room 055") {}
             Button("Conference Room 143") {}
             Button("Conference Room 144") {}
+            Spacer()
         }
     }
 }

@@ -23,7 +23,7 @@ struct IndoorMapView: View {
     static let SourcePointColor: Color = .blue
     static let DestinationPointColor: Color = .red
     static let PointDrawSize = 12.0
-    static let SourceDestinationPathColor: Color = .blue
+    static let SourceDestinationPathColor: Color = .green
 
     let indoorMapManager = FloorMapManager()
     //let indoorMapManager = MLCPDemoMapManager()
@@ -32,8 +32,8 @@ struct IndoorMapView: View {
     @ObservedObject var currentLocationData: CurrentLocationData
 
     @State var showSettings = false
-    @State private var locationOffsetX = 25.0
-    @State private var locationOffsetY = 25.0
+    @State private var locationOffsetX = 0.0
+    @State private var locationOffsetY = 0.0
     @State private var referenceBoxSizeX = 20.0
     @State private var referenceBoxSizeY = 20.0
     @State private var overrideMapScale = 10.0
@@ -72,14 +72,14 @@ struct IndoorMapView: View {
 
             if showSettings {
                 Rectangle()
-                    .stroke(Color.red, lineWidth: 4)
+                    .stroke(Color.blue, lineWidth: 1)
                     .frame(width: referenceBoxSizeX * getScale(), height: referenceBoxSizeY * getScale())
                     .position(CGPoint(x: locationOffsetX, y: locationOffsetY) * getScale() + CGPoint(x: 0.5*referenceBoxSizeX * getScale(), y: 0.5*referenceBoxSizeY * getScale()))
             }
             Circle()
                 .strokeBorder(.gray, lineWidth: 4)
                 .background(Circle().fill(.blue))
-                .frame(width: 15, height: 15)
+                .frame(width: 8, height: 8)
                 .position((CGPoint(x: currentLocationData.x, y: currentLocationData.y) + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale())
         }
     }
