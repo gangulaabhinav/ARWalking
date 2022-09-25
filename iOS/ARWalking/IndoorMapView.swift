@@ -77,7 +77,7 @@ struct IndoorMapView: View {
                     .position(CGPoint(x: locationOffsetX, y: locationOffsetY) * getScale() + CGPoint(x: 0.5*referenceBoxSizeX * getScale(), y: 0.5*referenceBoxSizeY * getScale()))
             }
             Circle()
-                .strokeBorder(.gray, lineWidth: 4)
+                .strokeBorder(.blue, lineWidth: 1)
                 .background(Circle().fill(.blue))
                 .frame(width: 8, height: 8)
                 .position((CGPoint(x: currentLocationData.x, y: currentLocationData.y) + CGPoint(x: locationOffsetX, y: locationOffsetY)) * getScale())
