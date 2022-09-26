@@ -5,6 +5,7 @@
 //  Created by Abhinav Gangula on 24/09/22.
 //
 
+import AVFoundation
 import Foundation
 import CoreGraphics
 import UIKit
@@ -18,6 +19,8 @@ class NavigationManager: ObservableObject {
 
     var navigationPath: [CGPoint] = []
     var completedPoints: [Bool] = []
+
+    let synthesizer = AVSpeechSynthesizer()
 
     func startNavigation(from: CGPoint, to: CGPoint) {
         sourceLocation = from
@@ -34,7 +37,7 @@ class NavigationManager: ObservableObject {
         let routeString = "Route calculated. Estimated time 1 minute to destination. Start walking"
         // Note: This delay is required for the notificaiton ot be announced reliably. Else, other notifications are overtaking these announcements
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-          UIAccessibility.post(notification: .announcement, argument: routeString)
+            self.speakString(string: routeString)
         }
         
         // Mark the source as completed destinations
@@ -74,8 +77,31 @@ class NavigationManager: ObservableObject {
                     turnAnnouncement = "Turn right"
                 }
             }
-            UIAccessibility.post(notification: .announcement, argument: turnAnnouncement)
+            speakString(string: turnAnnouncement)
         }
         return
+    }
+
+    func speakString(string: String) {
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .announcement, argument: string)
+        } else {
+            // Create an utterance.
+            let utterance = AVSpeechUtterance(string: string)
+
+            // Configure the utterance.
+            utterance.rate = 0.5
+            utterance.pitchMultiplier = 0.8
+            utterance.postUtteranceDelay = 0.2
+            utterance.volume = 0.8
+
+            // Retrieve the British English voice.
+            let voice = AVSpeechSynthesisVoice(language: "en-US")
+
+            // Assign the voice to the utterance.
+            utterance.voice = voice
+            // Tell the synthesizer to speak the utterance.
+            synthesizer.speak(utterance)
+        }
     }
 }
