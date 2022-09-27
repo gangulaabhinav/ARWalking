@@ -25,8 +25,8 @@ struct IndoorMapView: View {
     static let PointDrawSize = 12.0
     static let SourceDestinationPathColor: Color = .green
 
-    let indoorMapManager = FloorMapManager()
-    //let indoorMapManager = MLCPDemoMapManager()
+    //let indoorMapManager = FloorMapManager()
+    let indoorMapManager = MLCPDemoMapManager()
 
     @ObservedObject var navigationManager: NavigationManager
     @ObservedObject var currentLocationData: CurrentLocationData

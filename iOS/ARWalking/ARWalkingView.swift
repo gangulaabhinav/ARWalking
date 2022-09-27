@@ -56,8 +56,8 @@ struct ARWalkingView : View {
 }
 
 class CurrentLocationData: ObservableObject {
-    @Published var x: CGFloat = 25.0
-    @Published var y: CGFloat = 23.0
+    @Published var x: CGFloat = 24.0
+    @Published var y: CGFloat = 17.0
     
     var navigationManager: NavigationManager
 

@@ -17,16 +17,22 @@ struct DestinationSelectionView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 4) {
             Spacer()
             Text("Select a destination")
                 .font(.largeTitle)
-            Button("Conference Room 006") {
-                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 15.5, y: 17.0))
+            Button("Sample Destination 1") {
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 10, y: 17.0))
             }
-            Button("Conference Room 055") {}
-            Button("Conference Room 143") {}
-            Button("Conference Room 144") {}
+            Button("Sample Destination 2") {
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 15.5, y: 10.0))
+            }
+            Button("Sample Destination 3") {
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 22, y: 9.0))
+            }
+            Button("Sample Destination 4") {
+                navigationManager.startNavigation(from: CGPoint(x: currentLocationData.x, y: currentLocationData.y), to: CGPoint(x: 33, y: 17.0))
+            }
             Spacer()
         }
     }

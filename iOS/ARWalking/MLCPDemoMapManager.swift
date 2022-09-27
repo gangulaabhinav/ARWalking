@@ -23,6 +23,10 @@ class MLCPDemoMapManager: IndoorMapManagerProtocol {
     func getSourceToDestinationPath(source: CGPoint, destination: CGPoint) -> [CGPoint] {
         demoMapData.getSourceToDestinationPath(source: source, destination: destination)
     }
+
+    func getDestinations() -> [String: CGPoint] {
+        demoMapData.demoDestinations
+    }
 }
 
 struct DemoBoothsBox { // A row of booths for a demo booths box that can be drawn on map as a single block
@@ -35,9 +39,9 @@ struct DemoBoothsBox { // A row of booths for a demo booths box that can be draw
 extension DemoBoothsBox {
     init(x: CGFloat) {
         self.x = x
-        self.y = 30.0 // Assuming all boxes have same y center location
-        width = 2.0 // Width of a booth
-        length = 32.0 // Length of all booths combined in a row
+        self.y = 15.0 // Assuming all boxes have same y center location
+        width = 3.0 // Width of a booth
+        length = 13.0 // Length of all booths combined in a row
     }
 }
 
@@ -46,21 +50,17 @@ struct DemoMapData {
 
     // All dimensons in meters
     let demoBoxesList = [
-        DemoBoothsBox(x:  5.0 ),
-        DemoBoothsBox(x:  9.0 ),
-        DemoBoothsBox(x: 13.0),
-        DemoBoothsBox(x: 17.0),
-        DemoBoothsBox(x: 21.0),
+        DemoBoothsBox(x:  4.0),
+        DemoBoothsBox(x: 11.0),
+        DemoBoothsBox(x: 18.0),
         DemoBoothsBox(x: 25.0),
-        DemoBoothsBox(x: 29.0),
-        DemoBoothsBox(x: 33.0),
-        DemoBoothsBox(x: 37.0),
-        DemoBoothsBox(x: 41.0),
-        DemoBoothsBox(x: 45.0),
-        DemoBoothsBox(x: 49.0),
+        DemoBoothsBox(x: 32.0),
+        DemoBoothsBox(x: 39.0),
+        DemoBoothsBox(x: 46.0),
         DemoBoothsBox(x: 53.0),
     ]
 
+    let demoDestinations = ["Sample": CGPoint(x: 10, y: 15)]
     func getBoxIndexToRightOfPoint(point : CGPoint) -> Int {
         let totalBoxes = demoBoxesList.count
         var pointXIndex = totalBoxes
@@ -143,7 +143,7 @@ struct DemoMapData {
 
 struct DemoMapView: View {
     static let CanvsBackground: Color = Color(.sRGB, red: 230/255, green: 240/255, blue: 1, opacity: 1.0)
-    static let DemoBoothsColor: Color = .black
+    static let DemoBoothsColor: Color = .gray
 
     let demoMapData: DemoMapData
     let viewScale: CGFloat
