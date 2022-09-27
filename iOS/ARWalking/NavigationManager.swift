@@ -64,7 +64,6 @@ class NavigationManager: ObservableObject {
         
         // If we are near a turn that hasn't been visited previously, announce it
         if proximityPointIndex != -1 {
-            var turnAnnouncement = "Turn now"
             if proximityPointIndex == navigationPath.count - 1 {
                 announceReachedDestination()
             } else {
@@ -77,7 +76,6 @@ class NavigationManager: ObservableObject {
                     announceTurnRight()
                 }
             }
-            speakString(string: turnAnnouncement)
         }
         return
     }
