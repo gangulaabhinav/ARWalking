@@ -66,20 +66,32 @@ class NavigationManager: ObservableObject {
         if proximityPointIndex != -1 {
             var turnAnnouncement = "Turn now"
             if proximityPointIndex == navigationPath.count - 1 {
-                turnAnnouncement = "Reached destination"
+                announceReachedDestination()
             } else {
                 let arrivalVector = navigationPath[proximityPointIndex].getVector(from: navigationPath[proximityPointIndex - 1])
                 let destinationVector = navigationPath[proximityPointIndex].getVector(to: navigationPath[proximityPointIndex + 1])
                 let crossProduct = (arrivalVector.dx * destinationVector.dy) - (arrivalVector.dy * destinationVector.dx)
                 if crossProduct < 0 { // If the cross product is -ve, anti-clockwise, means left turn
-                    turnAnnouncement = "Turn left"
+                    announceTurnLeft()
                 } else {
-                    turnAnnouncement = "Turn right"
+                    announceTurnRight()
                 }
             }
             speakString(string: turnAnnouncement)
         }
         return
+    }
+
+    func announceTurnLeft() {
+        speakString(string: "Turn left")
+    }
+
+    func announceTurnRight() {
+        speakString(string: "Turn right")
+    }
+
+    func announceReachedDestination() {
+        speakString(string: "Reached destination")
     }
 
     func speakString(string: String) {

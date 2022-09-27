@@ -22,7 +22,7 @@ struct ARWalkingView : View {
     @ViewBuilder
     private func getView() -> some View {
         VStack(spacing: 0) {
-            BluetoothLEView(currentLocationData: currentLocationData)
+            BluetoothLEView(currentLocationData: currentLocationData, navigationManager: navigationManager)
             IndoorMapView(currentLocationData: currentLocationData, navigationManager: navigationManager)
                 .frame(maxWidth: .infinity)
         }

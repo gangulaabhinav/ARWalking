@@ -12,9 +12,9 @@ struct BluetoothLEView: View {
     @ObservedObject var bleManager: BluetoothLEManager
     @ObservedObject var currentLocationData: CurrentLocationData
 
-    init(currentLocationData: CurrentLocationData) {
+    init(currentLocationData: CurrentLocationData, navigationManager: NavigationManager) {
         self.currentLocationData = currentLocationData
-        self.bleManager = BluetoothLEManager(currentLocationData: currentLocationData)
+        self.bleManager = BluetoothLEManager(currentLocationData: currentLocationData, navigationManager: navigationManager)
     }
 
     var body: some View {
@@ -32,7 +32,7 @@ struct BluetoothLEView: View {
 
 struct BluetoothLEView_Previews: PreviewProvider {
     static var previews: some View {
-        BluetoothLEView(currentLocationData: CurrentLocationData(navigationManager: NavigationManager()))
+        BluetoothLEView(currentLocationData: CurrentLocationData(navigationManager: NavigationManager()), navigationManager: NavigationManager())
     }
 }
 
@@ -49,6 +49,7 @@ class BluetoothLEManager: NSObject, ObservableObject {
     var connectedPeripheral: CBPeripheral?
 
     var currentLocationData: CurrentLocationData
+    var navigationManager: NavigationManager
 
     @Published var logText = "Sample small text"
     @Published var bleStatus = "Unknown"
@@ -69,8 +70,9 @@ class BluetoothLEManager: NSObject, ObservableObject {
         }
     }
 
-    init(currentLocationData: CurrentLocationData) {
+    init(currentLocationData: CurrentLocationData, navigationManager: NavigationManager) {
         self.currentLocationData = currentLocationData
+        self.navigationManager = navigationManager
         super.init()
         bleCentral = CBCentralManager(delegate: self, queue: DispatchQueue.main)
     }
@@ -245,11 +247,17 @@ extension BluetoothLEManager: CBPeripheralDelegate {
 
         let data = characteristic.value ?? Data()
         let stringValue = String(data: data, encoding: .utf8) ?? ""
-        let distancesArr = stringValue.components(separatedBy: ",")
-        if (characteristic.uuid == uuidCharForRead || characteristic.uuid == uuidCharForIndicate) && distancesArr.count == 2 {
-            currentLocationData.x = CGFloat(Float(distancesArr[0]) ?? 0.0)
-            currentLocationData.y = CGFloat(Float(distancesArr[1]) ?? 0.0)
-            currentLocationData.onLocationUpdated()
+        if stringValue == "l" {
+            navigationManager.announceTurnLeft()
+        } else if stringValue == "r" {
+            navigationManager.announceTurnRight()
+        } else {
+            let distancesArr = stringValue.components(separatedBy: ",")
+            if (characteristic.uuid == uuidCharForRead || characteristic.uuid == uuidCharForIndicate) && distancesArr.count == 2 {
+                currentLocationData.x = CGFloat(Float(distancesArr[0]) ?? 0.0)
+                currentLocationData.y = CGFloat(Float(distancesArr[1]) ?? 0.0)
+                currentLocationData.onLocationUpdated()
+            }
         }
         appendLog("didUpdateValue '\(stringValue)'")
     }
