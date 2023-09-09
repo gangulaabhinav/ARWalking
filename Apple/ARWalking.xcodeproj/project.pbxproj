@@ -91,6 +91,7 @@
 		ADB58A912AACF0C400B540F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		ADB58A972AACF0C400B540F4 /* visioniOSARWalkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = visioniOSARWalkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = visionARWalkingTests.swift; sourceTree = "<group>"; };
+		ADB58AA42AAD1FF300B540F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +163,7 @@
 		ADB58A392AACCAE600B540F4 /* iOSARWalking */ = {
 			isa = PBXGroup;
 			children = (
+				ADB58AA42AAD1FF300B540F4 /* Info.plist */,
 				ADB58A3A2AACCAE600B540F4 /* iOSARWalkingApp.swift */,
 				ADB58A6D2AACCD0C00B540F4 /* ARWalkingView.swift */,
 				ADB58A6E2AACCD0C00B540F4 /* ARWalkingZone.swift */,
@@ -639,8 +641,11 @@
 				DEVELOPMENT_TEAM = WFYU4A59H8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOSARWalking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ARWalking;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Need for AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -673,8 +678,11 @@
 				DEVELOPMENT_TEAM = WFYU4A59H8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOSARWalking/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ARWalking;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Need for location";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Need for AR";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
