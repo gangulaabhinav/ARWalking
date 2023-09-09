@@ -2,12 +2,12 @@
 //  ARWalkingUITestsLaunchTests.swift
 //  ARWalkingUITests
 //
-//  Created by Abhinav Gangula on 27/06/22.
+//  Created by Abhinav Gangula on 09/09/23.
 //
 
 import XCTest
 
-class ARWalkingUITestsLaunchTests: XCTestCase {
+final class ARWalkingUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
