@@ -2,13 +2,13 @@
 //  ARWalkingTests.swift
 //  ARWalkingTests
 //
-//  Created by Abhinav Gangula on 27/06/22.
+//  Created by Abhinav Gangula on 09/09/23.
 //
 
 import XCTest
 @testable import ARWalking
 
-class ARWalkingTests: XCTestCase {
+final class ARWalkingTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
