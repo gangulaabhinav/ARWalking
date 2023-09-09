@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import ARWalking
+@testable import iOSARWalking
 
 final class ARWalkingTests: XCTestCase {
 

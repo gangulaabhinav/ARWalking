@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct ARWalkingApp: App {
+struct iOSARWalkingApp: App {
     var body: some Scene {
         WindowGroup {
             ARWalkingView()
