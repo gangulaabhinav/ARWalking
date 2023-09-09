@@ -1,12 +1,12 @@
 //
-//  ARWalkingTests.swift
-//  ARWalkingTests
+//  iOSARWalkingTests.swift
+//  iOSARWalkingTests
 //
 //  Created by Abhinav Gangula on 09/09/23.
 //
 
 import XCTest
-@testable import ARWalking
+@testable import iOSARWalking
 
 final class ARWalkingTests: XCTestCase {
 
