@@ -1,6 +1,6 @@
 //
-//  ARWalkingTests.swift
-//  ARWalkingTests
+//  iOSARWalkingTests.swift
+//  iOSARWalkingTests
 //
 //  Created by Abhinav Gangula on 09/09/23.
 //
