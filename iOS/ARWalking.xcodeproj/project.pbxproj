@@ -25,6 +25,14 @@
 		ADB58A792AACCD0C00B540F4 /* ARWalkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A6D2AACCD0C00B540F4 /* ARWalkingView.swift */; };
 		ADB58A7A2AACCD0C00B540F4 /* ARWalkingZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A6E2AACCD0C00B540F4 /* ARWalkingZone.swift */; };
 		ADB58A7B2AACCD0C00B540F4 /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A6F2AACCD0C00B540F4 /* CGPoint+Extension.swift */; };
+		ADB58A852AACF0C000B540F4 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = ADB58A842AACF0C000B540F4 /* RealityKitContent */; };
+		ADB58A872AACF0C000B540F4 /* visionARWalkingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A862AACF0C000B540F4 /* visionARWalkingApp.swift */; };
+		ADB58A892AACF0C000B540F4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A882AACF0C000B540F4 /* ContentView.swift */; };
+		ADB58A8B2AACF0C000B540F4 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A8A2AACF0C000B540F4 /* ImmersiveView.swift */; };
+		ADB58A8D2AACF0C000B540F4 /* ImageBasedLighting.skybox in Resources */ = {isa = PBXBuildFile; fileRef = ADB58A8C2AACF0C000B540F4 /* ImageBasedLighting.skybox */; };
+		ADB58A8F2AACF0C400B540F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADB58A8E2AACF0C400B540F4 /* Assets.xcassets */; };
+		ADB58A922AACF0C400B540F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADB58A912AACF0C400B540F4 /* Preview Assets.xcassets */; };
+		ADB58A9C2AACF0C400B540F4 /* visionARWalkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +49,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = ADB58A362AACCAE600B540F4;
 			remoteInfo = ARWalking;
+		};
+		ADB58A982AACF0C400B540F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ADB58A2F2AACCAE600B540F4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADB58A7F2AACF0BF00B540F4;
+			remoteInfo = visionARWalking;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -66,6 +81,16 @@
 		ADB58A6D2AACCD0C00B540F4 /* ARWalkingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARWalkingView.swift; sourceTree = "<group>"; };
 		ADB58A6E2AACCD0C00B540F4 /* ARWalkingZone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARWalkingZone.swift; sourceTree = "<group>"; };
 		ADB58A6F2AACCD0C00B540F4 /* CGPoint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
+		ADB58A802AACF0BF00B540F4 /* visionARWalking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = visionARWalking.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADB58A832AACF0C000B540F4 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
+		ADB58A862AACF0C000B540F4 /* visionARWalkingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = visionARWalkingApp.swift; sourceTree = "<group>"; };
+		ADB58A882AACF0C000B540F4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		ADB58A8A2AACF0C000B540F4 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
+		ADB58A8C2AACF0C000B540F4 /* ImageBasedLighting.skybox */ = {isa = PBXFileReference; lastKnownFileType = file.skybox; path = ImageBasedLighting.skybox; sourceTree = "<group>"; };
+		ADB58A8E2AACF0C400B540F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ADB58A912AACF0C400B540F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		ADB58A972AACF0C400B540F4 /* visionARWalkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = visionARWalkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = visionARWalkingTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +115,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADB58A7D2AACF0BF00B540F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADB58A852AACF0C000B540F4 /* RealityKitContent in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADB58A942AACF0C400B540F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -99,6 +139,9 @@
 				ADB58A392AACCAE600B540F4 /* ARWalking */,
 				ADB58A4A2AACCAE900B540F4 /* ARWalkingTests */,
 				ADB58A542AACCAE900B540F4 /* ARWalkingUITests */,
+				ADB58A812AACF0C000B540F4 /* visionARWalking */,
+				ADB58A822AACF0C000B540F4 /* Packages */,
+				ADB58A9A2AACF0C400B540F4 /* visionARWalkingTests */,
 				ADB58A382AACCAE600B540F4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -110,6 +153,8 @@
 				ADB58A372AACCAE600B540F4 /* ARWalking.app */,
 				ADB58A472AACCAE900B540F4 /* ARWalkingTests.xctest */,
 				ADB58A512AACCAE900B540F4 /* ARWalkingUITests.xctest */,
+				ADB58A802AACF0BF00B540F4 /* visionARWalking.app */,
+				ADB58A972AACF0C400B540F4 /* visionARWalkingTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -159,6 +204,43 @@
 				ADB58A572AACCAE900B540F4 /* ARWalkingUITestsLaunchTests.swift */,
 			);
 			path = ARWalkingUITests;
+			sourceTree = "<group>";
+		};
+		ADB58A812AACF0C000B540F4 /* visionARWalking */ = {
+			isa = PBXGroup;
+			children = (
+				ADB58A862AACF0C000B540F4 /* visionARWalkingApp.swift */,
+				ADB58A882AACF0C000B540F4 /* ContentView.swift */,
+				ADB58A8A2AACF0C000B540F4 /* ImmersiveView.swift */,
+				ADB58A8C2AACF0C000B540F4 /* ImageBasedLighting.skybox */,
+				ADB58A8E2AACF0C400B540F4 /* Assets.xcassets */,
+				ADB58A902AACF0C400B540F4 /* Preview Content */,
+			);
+			path = visionARWalking;
+			sourceTree = "<group>";
+		};
+		ADB58A822AACF0C000B540F4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				ADB58A832AACF0C000B540F4 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		ADB58A902AACF0C400B540F4 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				ADB58A912AACF0C400B540F4 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		ADB58A9A2AACF0C400B540F4 /* visionARWalkingTests */ = {
+			isa = PBXGroup;
+			children = (
+				ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */,
+			);
+			path = visionARWalkingTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,6 +299,44 @@
 			productReference = ADB58A512AACCAE900B540F4 /* ARWalkingUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		ADB58A7F2AACF0BF00B540F4 /* visionARWalking */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADB58A9D2AACF0C400B540F4 /* Build configuration list for PBXNativeTarget "visionARWalking" */;
+			buildPhases = (
+				ADB58A7C2AACF0BF00B540F4 /* Sources */,
+				ADB58A7D2AACF0BF00B540F4 /* Frameworks */,
+				ADB58A7E2AACF0BF00B540F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = visionARWalking;
+			packageProductDependencies = (
+				ADB58A842AACF0C000B540F4 /* RealityKitContent */,
+			);
+			productName = visionARWalking;
+			productReference = ADB58A802AACF0BF00B540F4 /* visionARWalking.app */;
+			productType = "com.apple.product-type.application";
+		};
+		ADB58A962AACF0C400B540F4 /* visionARWalkingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADB58AA02AACF0C400B540F4 /* Build configuration list for PBXNativeTarget "visionARWalkingTests" */;
+			buildPhases = (
+				ADB58A932AACF0C400B540F4 /* Sources */,
+				ADB58A942AACF0C400B540F4 /* Frameworks */,
+				ADB58A952AACF0C400B540F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ADB58A992AACF0C400B540F4 /* PBXTargetDependency */,
+			);
+			name = visionARWalkingTests;
+			productName = visionARWalkingTests;
+			productReference = ADB58A972AACF0C400B540F4 /* visionARWalkingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -238,6 +358,13 @@
 						CreatedOnToolsVersion = 15.0;
 						TestTargetID = ADB58A362AACCAE600B540F4;
 					};
+					ADB58A7F2AACF0BF00B540F4 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					ADB58A962AACF0C400B540F4 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = ADB58A7F2AACF0BF00B540F4;
+					};
 				};
 			};
 			buildConfigurationList = ADB58A322AACCAE600B540F4 /* Build configuration list for PBXProject "ARWalking" */;
@@ -256,6 +383,8 @@
 				ADB58A362AACCAE600B540F4 /* ARWalking */,
 				ADB58A462AACCAE900B540F4 /* ARWalkingTests */,
 				ADB58A502AACCAE900B540F4 /* ARWalkingUITests */,
+				ADB58A7F2AACF0BF00B540F4 /* visionARWalking */,
+				ADB58A962AACF0C400B540F4 /* visionARWalkingTests */,
 			);
 		};
 /* End PBXProject section */
@@ -279,6 +408,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		ADB58A4F2AACCAE900B540F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADB58A7E2AACF0BF00B540F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADB58A8F2AACF0C400B540F4 /* Assets.xcassets in Resources */,
+				ADB58A922AACF0C400B540F4 /* Preview Assets.xcassets in Resources */,
+				ADB58A8D2AACF0C000B540F4 /* ImageBasedLighting.skybox in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADB58A952AACF0C400B540F4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -324,6 +470,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADB58A7C2AACF0BF00B540F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADB58A892AACF0C000B540F4 /* ContentView.swift in Sources */,
+				ADB58A872AACF0C000B540F4 /* visionARWalkingApp.swift in Sources */,
+				ADB58A8B2AACF0C000B540F4 /* ImmersiveView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADB58A932AACF0C400B540F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADB58A9C2AACF0C400B540F4 /* visionARWalkingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -336,6 +500,11 @@
 			isa = PBXTargetDependency;
 			target = ADB58A362AACCAE600B540F4 /* ARWalking */;
 			targetProxy = ADB58A522AACCAE900B540F4 /* PBXContainerItemProxy */;
+		};
+		ADB58A992AACF0C400B540F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADB58A7F2AACF0BF00B540F4 /* visionARWalking */;
+			targetProxy = ADB58A982AACF0C400B540F4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -601,6 +770,106 @@
 			};
 			name = Release;
 		};
+		ADB58A9E2AACF0C400B540F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"visionARWalking/Preview Content\"";
+				DEVELOPMENT_TEAM = WFYU4A59H8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.microsoft.visionARWalking;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		ADB58A9F2AACF0C400B540F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"visionARWalking/Preview Content\"";
+				DEVELOPMENT_TEAM = WFYU4A59H8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.microsoft.visionARWalking;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
+		ADB58AA12AACF0C400B540F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WFYU4A59H8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.microsoft.visionARWalkingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/visionARWalking.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/visionARWalking";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		ADB58AA22AACF0C400B540F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WFYU4A59H8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.microsoft.visionARWalkingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/visionARWalking.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/visionARWalking";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -640,7 +909,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		ADB58A9D2AACF0C400B540F4 /* Build configuration list for PBXNativeTarget "visionARWalking" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADB58A9E2AACF0C400B540F4 /* Debug */,
+				ADB58A9F2AACF0C400B540F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADB58AA02AACF0C400B540F4 /* Build configuration list for PBXNativeTarget "visionARWalkingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADB58AA12AACF0C400B540F4 /* Debug */,
+				ADB58AA22AACF0C400B540F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ADB58A842AACF0C000B540F4 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = ADB58A2F2AACCAE600B540F4 /* Project object */;
 }
