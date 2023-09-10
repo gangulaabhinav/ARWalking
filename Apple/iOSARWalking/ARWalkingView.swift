@@ -10,6 +10,8 @@ import RealityKit
 import SwiftUI
 
 struct ARWalkingView : View {
+    static let startWithARViewContainer = false
+
     var currentLocationData: CurrentLocationData
     @ObservedObject var navigationManager: NavigationManager
 
@@ -17,6 +19,12 @@ struct ARWalkingView : View {
         let navManager = NavigationManager()
         self.navigationManager = navManager
         self.currentLocationData = CurrentLocationData(navigationManager: navManager)
+    }
+
+    private func getARViewContainer() -> some View {
+        ARViewContainer()
+            .edgesIgnoringSafeArea(.all)
+            .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder
@@ -29,9 +37,7 @@ struct ARWalkingView : View {
             .frame(maxWidth: .infinity)
             .accessibilityElement(children: .ignore)
         if navigationManager.isNavigating {
-            ARViewContainer()
-                .edgesIgnoringSafeArea(.all)
-                .frame(maxWidth: .infinity)
+            getARViewContainer()
         } else {
             DestinationSelectionView(currentLocationData: currentLocationData, navigationManager: navigationManager)
                 .edgesIgnoringSafeArea(.all)
@@ -41,14 +47,18 @@ struct ARWalkingView : View {
     }
     
     var body: some View {
-        GeometryReader { ruler in
-            if ruler.size.width < ruler.size.height { // Portrait
-                VStack(spacing: 0) {
-                    getView()
-                }
-            } else { // landscape
-                HStack(spacing: 0) {
-                    getView()
+        if ARWalkingView.startWithARViewContainer {
+            getARViewContainer()
+        } else {
+            GeometryReader { ruler in
+                if ruler.size.width < ruler.size.height { // Portrait
+                    VStack(spacing: 0) {
+                        getView()
+                    }
+                } else { // landscape
+                    HStack(spacing: 0) {
+                        getView()
+                    }
                 }
             }
         }
