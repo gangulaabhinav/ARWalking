@@ -10,7 +10,7 @@ import RealityKit
 import SwiftUI
 
 struct ARWalkingView : View {
-    static let startWithARViewContainer = true
+    static let startWithARViewContainer = false
 
     var currentLocationData: CurrentLocationData
     @ObservedObject var navigationManager: NavigationManager
