@@ -33,6 +33,9 @@
 		ADB58A8F2AACF0C400B540F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADB58A8E2AACF0C400B540F4 /* Assets.xcassets */; };
 		ADB58A922AACF0C400B540F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADB58A912AACF0C400B540F4 /* Preview Assets.xcassets */; };
 		ADB58A9C2AACF0C400B540F4 /* visionARWalkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */; };
+		ADCE2D022AAF6596004E90D4 /* ARWalkingZoneSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCE2D002AAF6596004E90D4 /* ARWalkingZoneSurface.swift */; };
+		ADCE2D032AAF6596004E90D4 /* ARWalkingZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCE2D012AAF6596004E90D4 /* ARWalkingZone.swift */; };
+		ADCE2D052AAF69B5004E90D4 /* ARWalkingZoneRay.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCE2D042AAF69B5004E90D4 /* ARWalkingZoneRay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +95,9 @@
 		ADB58A972AACF0C400B540F4 /* visioniOSARWalkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = visioniOSARWalkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADB58A9B2AACF0C400B540F4 /* visionARWalkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = visionARWalkingTests.swift; sourceTree = "<group>"; };
 		ADB58AA42AAD1FF300B540F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		ADCE2D002AAF6596004E90D4 /* ARWalkingZoneSurface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneSurface.swift; sourceTree = "<group>"; };
+		ADCE2D012AAF6596004E90D4 /* ARWalkingZone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARWalkingZone.swift; sourceTree = "<group>"; };
+		ADCE2D042AAF69B5004E90D4 /* ARWalkingZoneRay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARWalkingZoneRay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,9 +217,12 @@
 		ADB58A812AACF0C000B540F4 /* visionARWalking */ = {
 			isa = PBXGroup;
 			children = (
-				ADB58A862AACF0C000B540F4 /* visionARWalkingApp.swift */,
+				ADCE2D012AAF6596004E90D4 /* ARWalkingZone.swift */,
+				ADCE2D042AAF69B5004E90D4 /* ARWalkingZoneRay.swift */,
+				ADCE2D002AAF6596004E90D4 /* ARWalkingZoneSurface.swift */,
 				ADB58A882AACF0C000B540F4 /* ContentView.swift */,
 				ADB58A8A2AACF0C000B540F4 /* ImmersiveView.swift */,
+				ADB58A862AACF0C000B540F4 /* visionARWalkingApp.swift */,
 				ADB58A8C2AACF0C000B540F4 /* ImageBasedLighting.skybox */,
 				ADB58A8E2AACF0C400B540F4 /* Assets.xcassets */,
 				ADB58A902AACF0C400B540F4 /* Preview Content */,
@@ -477,8 +486,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADB58A892AACF0C000B540F4 /* ContentView.swift in Sources */,
+				ADCE2D032AAF6596004E90D4 /* ARWalkingZone.swift in Sources */,
 				ADB58A872AACF0C000B540F4 /* visionARWalkingApp.swift in Sources */,
+				ADCE2D022AAF6596004E90D4 /* ARWalkingZoneSurface.swift in Sources */,
 				ADB58A8B2AACF0C000B540F4 /* ImmersiveView.swift in Sources */,
+				ADCE2D052AAF69B5004E90D4 /* ARWalkingZoneRay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
