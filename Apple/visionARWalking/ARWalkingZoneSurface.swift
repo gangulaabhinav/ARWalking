@@ -26,7 +26,7 @@ class ARWalkingZoneSurface {
     }
 
     var modelEntity: ModelEntity
-//    var rays: [ARWalkingZoneRay] = []
+    var rays: [ARWalkingZoneRay] = []
 
     init(with anchor: AnchorEntity, material: Material, width: Float, height: Float, rotationAxis: RotationAxis = .none, rotationAngle: Float = 0.0, rayDistance: Float = 1.0) {
         let frontMesh: MeshResource = .generatePlane(width: width, height: height)
@@ -35,24 +35,25 @@ class ARWalkingZoneSurface {
         frontTransform.rotation = GetquatfFromRotation(rotationAxis: rotationAxis, rotationAngle: rotationAngle)
         modelEntity.transform = frontTransform
         anchor.addChild(modelEntity)
-//        addRays(material: material, width: width, height: height)
+        addRays(material: material, width: width, height: height)
     }
 
 //    func SetTranslation(translation: SIMD3<Float>, with session: ARSession, frame: ARFrame) -> ARWalkingZoneRay.RayCastResult {
     func SetTranslation(translation: SIMD3<Float>) -> ARWalkingZoneRay.RayCastResult {
         modelEntity.transform.translation = translation
         var surfaceResult:ARWalkingZoneRay.RayCastResult = .green
-//        // updated with the worst result fro all the rays, red being worst
-//        for ray in rays {
+        // updated with the worst result fro all the rays, red being worst
+        for ray in rays {
 //            let rayResult = ray.update(with: session, frame: frame)
-//            if rayResult == .red {
-//                surfaceResult = rayResult
-//            } else if rayResult == .yellow && surfaceResult == .green {
-//                surfaceResult = rayResult
-//            }
-//        }
-//
-//        // update color based on raycast result
+            let rayResult = ray.update()
+            if rayResult == .red {
+                surfaceResult = rayResult
+            } else if rayResult == .yellow && surfaceResult == .green {
+                surfaceResult = rayResult
+            }
+        }
+
+        // update color based on raycast result
         var material = SimpleMaterial()
         switch surfaceResult {
         case .green:
@@ -66,12 +67,12 @@ class ARWalkingZoneSurface {
         return surfaceResult
     }
 
-//    func addRays(material: Material, width: Float, height: Float) {
-//        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: height/2))
-//        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: -height/2))
-//        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: height/2))
-//        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: -height/2))
-//    }
+    func addRays(material: Material, width: Float, height: Float) {
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: width/2, y: -height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: height/2))
+        rays.append(ARWalkingZoneRay(with: modelEntity, material: material, x: -width/2, y: -height/2))
+    }
 
     func GetquatfFromRotation(rotationAxis: RotationAxis, rotationAngle: Float) -> simd_quatf {
         switch rotationAxis {

@@ -28,34 +28,36 @@ class ARWalkingZoneRay {
     }
 
 //    func update(with session: ARSession, frame: ARFrame) -> RayCastResult {
+    func update() -> RayCastResult {
 //        let cameraPosition = simd_make_float3(frame.camera.transform.columns.3)
-//        let modelPositionInWorld = modelEntity.position(relativeTo: nil)
-//        let modelDistanceFromCamera = simd_distance(cameraPosition, modelPositionInWorld)
+        let cameraPosition = simd_float3()
+        let modelPositionInWorld = modelEntity.position(relativeTo: nil)
+        let modelDistanceFromCamera = simd_distance(cameraPosition, modelPositionInWorld)
+
 //        // Tryign to raycast from camera to the model position
-//
 //        let rayCastQuery = ARRaycastQuery(origin: cameraPosition, direction: modelPositionInWorld - cameraPosition, allowing: .estimatedPlane, alignment: .any)
 //        let rayCastResult = session.raycast(rayCastQuery)
-//        var rayCastDistance: Float = Float.greatestFiniteMagnitude // Assuming distance is maximum if there are no ray cast results
+        var rayCastDistance: Float = Float.greatestFiniteMagnitude // Assuming distance is maximum if there are no ray cast results
 //        if !rayCastResult.isEmpty {
 //            let worldPos = simd_make_float3(rayCastResult[0].worldTransform.columns.3)
 //            let cameraPos = simd_make_float3(frame.camera.transform.columns.3)
 //            rayCastDistance = simd_distance(cameraPos, worldPos)
 //        }
-//        let rayCastModelDistance = modelDistanceFromCamera - rayCastDistance
-//
-//        var material = SimpleMaterial()
-//        var result:RayCastResult = .green
-//        if rayCastModelDistance > rayCastBuffer { // ray cast is closer to modelDistanceFromCamera, red color
-//            material.color =  .init(tint: .red.withAlphaComponent(1.0), texture: nil)
-//            result = .red
-//        } else if rayCastModelDistance > -rayCastBuffer { // buffer zone yellow color
-//            material.color =  .init(tint: .yellow.withAlphaComponent(1.0), texture: nil)
-//            result = .yellow
-//        } else {
-//            material.color =  .init(tint: .green.withAlphaComponent(1.0), texture: nil)
-//            result = .green
-//        }
-//        modelEntity.model?.materials = [material]
-//        return result
-//    }
+        let rayCastModelDistance = modelDistanceFromCamera - rayCastDistance
+
+        var material = SimpleMaterial()
+        var result:RayCastResult = .green
+        if rayCastModelDistance > rayCastBuffer { // ray cast is closer to modelDistanceFromCamera, red color
+            material.color =  .init(tint: .red.withAlphaComponent(1.0), texture: nil)
+            result = .red
+        } else if rayCastModelDistance > -rayCastBuffer { // buffer zone yellow color
+            material.color =  .init(tint: .yellow.withAlphaComponent(1.0), texture: nil)
+            result = .yellow
+        } else {
+            material.color =  .init(tint: .green.withAlphaComponent(1.0), texture: nil)
+            result = .green
+        }
+        modelEntity.model?.materials = [material]
+        return result
+    }
 }
