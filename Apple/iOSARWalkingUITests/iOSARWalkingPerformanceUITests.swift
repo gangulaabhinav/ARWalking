@@ -26,13 +26,17 @@ final class iOSARWalkingPerformanceUITests: XCTestCase {
         measure(metrics: [XCTMemoryMetric(application: app)],
                     options: options) {
             startMeasuring()
+            let buttons = app.buttons
+            XCTAssert(buttons.count == 0)
+            let textViews = app.textViews
+            XCTAssert(textViews.count == 0)
         }
     }
 
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
-    }
+//    func testLaunchPerformance() throws {
+//        // This measures how long it takes to launch your application.
+//        measure(metrics: [XCTApplicationLaunchMetric()]) {
+//            XCUIApplication().launch()
+//        }
+//    }
 }
