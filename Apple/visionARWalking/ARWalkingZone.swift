@@ -58,13 +58,13 @@ class ARWalkingZone {
 //    }
 
 //    func session(_ session: ARSession, didUpdate frame: ARFrame) -> ARWalkingZoneRay.RayCastResult {
-    func session() -> ARWalkingZoneRay.RayCastResult {
+    func session(cameraTransform: simd_float4x4 = simd_float4x4()) -> ARWalkingZoneRay.RayCastResult {
 //        let cameraTransform = frame.camera.transform
 //        let walkingZoneTransform = getARWalkingZoneTransform(planeTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
 //        walkingZoneEntity.transform = Transform(matrix: walkingZoneTransform)
 //
 //        let cameraFloorDstance = getCameraFloorDstance(floorTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
-        let cameraFloorDstance = getCameraFloorDstance(floorTransform: simd_float4x4(), cameraTransform: simd_float4x4())
+        let cameraFloorDstance = getCameraFloorDstance(floorTransform: simd_float4x4(diagonal: [1, 1, 1, 1]), cameraTransform: cameraTransform)
         var surfaceResults:[ARWalkingZoneRay.RayCastResult] = []
 //        surfaceResults.append(arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0], with: session, frame: frame) ?? .green)
 //        surfaceResults.append(arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2], with: session, frame: frame) ?? .green)
@@ -132,10 +132,9 @@ class ARWalkingZone {
     }
 
     func getCameraFloorDstance(floorTransform: simd_float4x4, cameraTransform: simd_float4x4) -> Float {
-//        let cameraPoint = cameraTransform[3]
-//        // transform cameraPoin in local coordinates to floorTansoform coordinates and take the y coordinate as distance
-//        let cameraPointwrtFloor = floorTransform.inverse * cameraPoint
-//        return cameraPointwrtFloor[1]
-        return 1.0
+        let cameraPoint = cameraTransform[3]
+        // transform cameraPoin in local coordinates to floorTansoform coordinates and take the y coordinate as distance
+        let cameraPointwrtFloor = floorTransform.inverse * cameraPoint
+        return cameraPointwrtFloor[1]
     }
 }
