@@ -17,6 +17,7 @@ class ARWalkingZone {
     let depthOffset: Float = 1.0 // Depth offset from camera to start measuring or raycasting, should be lass than the depth
 
 //    var floorPlaneAnchor: ARPlaneAnchor
+    var floorPlaneAnchor: AnchorEntity?
 //    var floorModelEntity: ModelEntity
     var walkingZoneEntity: AnchorEntity
     var arWalkingZoneSurfaces = [ARWalkingZoneSurface.Direction: ARWalkingZoneSurface]()
@@ -47,15 +48,14 @@ class ARWalkingZone {
 
 //        let sound = Bundle.main.path(forResource: "sound", ofType: "mp3")
 //        audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: sound!))
-        _ = session()
     }
 
-//    func onFloorUpdated(with planeAnchor: ARPlaneAnchor) {
-//        floorPlaneAnchor = planeAnchor
+    func onFloorUpdated(with planeAnchor: AnchorEntity) {
+        floorPlaneAnchor = planeAnchor
 //        floorModelEntity.model?.mesh = .generatePlane(width: floorPlaneAnchor.extent.x, depth: floorPlaneAnchor.extent.z)
 //        floorModelEntity.transform = Transform(matrix: floorPlaneAnchor.transform)
 //        floorModelEntity.transform.translation += floorPlaneAnchor.center
-//    }
+    }
 
 //    func session(_ session: ARSession, didUpdate frame: ARFrame) -> ARWalkingZoneRay.RayCastResult {
     func session(cameraTransform: simd_float4x4 = simd_float4x4()) -> ARWalkingZoneRay.RayCastResult {
@@ -64,16 +64,16 @@ class ARWalkingZone {
 //        walkingZoneEntity.transform = Transform(matrix: walkingZoneTransform)
 //
 //        let cameraFloorDstance = getCameraFloorDstance(floorTransform: floorPlaneAnchor.transform, cameraTransform: cameraTransform)
-        let cameraFloorDstance = getCameraFloorDstance(floorTransform: simd_float4x4(diagonal: [1, 1, 1, 1]), cameraTransform: cameraTransform)
+        let cameraFloorDistance = getCameraFloorDstance(floorTransform: (floorPlaneAnchor?.transform ?? Transform.identity).matrix, cameraTransform: cameraTransform)
         var surfaceResults:[ARWalkingZoneRay.RayCastResult] = []
 //        surfaceResults.append(arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0], with: session, frame: frame) ?? .green)
 //        surfaceResults.append(arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2], with: session, frame: frame) ?? .green)
 //        surfaceResults.append(arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, width/2], with: session, frame: frame) ?? .green)
 //        surfaceResults.append(arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDstance, 0], with: session, frame: frame) ?? .green)
-        surfaceResults.append(arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDstance, 0]) ?? .green)
-        surfaceResults.append(arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, -width/2]) ?? .green)
-        surfaceResults.append(arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDstance, width/2]) ?? .green)
-        surfaceResults.append(arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDstance, 0]) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.front]?.SetTranslation(translation: [-depth, height/2 - cameraFloorDistance, 0]) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.right]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDistance, -width/2]) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.left]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height/2 - cameraFloorDistance, width/2]) ?? .green)
+        surfaceResults.append(arWalkingZoneSurfaces[.top]?.SetTranslation(translation: [-depth/2 - depthOffset/2, height - cameraFloorDistance, 0]) ?? .green)
 
         var zoneResult:ARWalkingZoneRay.RayCastResult = .green
         for surfaceResult in surfaceResults {

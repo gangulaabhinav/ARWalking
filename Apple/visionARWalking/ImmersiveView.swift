@@ -54,6 +54,9 @@ struct ImmersiveView: View {
         }
 
         Task {
+            let floorAnchor = await AnchorEntity(.plane(.horizontal, classification: .floor,
+                                                             minimumBounds: [1, 1]))
+            walkingZone.onFloorUpdated(with: floorAnchor)
             if WorldTrackingProvider.isSupported {
                 do {
                     try await session.run([worldTrackingProvider])
